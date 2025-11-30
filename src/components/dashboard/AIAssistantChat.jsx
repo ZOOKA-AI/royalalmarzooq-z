@@ -384,14 +384,24 @@ export default function AIAssistantChat() {
   if (!isOpen) {
     return (
       <div className="fixed bottom-6 left-6 z-[9999]">
-        <Button
+        <button
           onClick={() => setIsOpen(true)}
-          className="h-16 w-16 rounded-full bg-gradient-to-r from-purple-600 to-purple-700 shadow-2xl hover:shadow-xl transition-all hover:scale-110 border-4 border-white"
-          style={{ animation: 'bounce 2s infinite' }}
+          className="h-16 w-16 rounded-full bg-gradient-to-r from-purple-600 to-purple-700 shadow-2xl hover:shadow-xl transition-all hover:scale-110 border-4 border-white flex items-center justify-center cursor-pointer"
+          style={{ 
+            animation: 'chatBounce 2s ease-in-out infinite',
+          }}
+          type="button"
+          aria-label="فتح المساعد الذكي"
         >
           <Bot className="h-8 w-8 text-white" />
-        </Button>
-        <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white animate-pulse"></span>
+        </button>
+        <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white animate-pulse pointer-events-none"></span>
+        <style>{`
+          @keyframes chatBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+          }
+        `}</style>
       </div>
     );
   }
