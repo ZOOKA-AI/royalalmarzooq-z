@@ -25,7 +25,7 @@ const navItems = [
   { name: 'العمال', page: 'Workers', icon: UserCog },
   { name: 'الموظفين', page: 'Employees', icon: Users },
   { name: 'الخدمات', page: 'Services', icon: Wrench },
-  { name: 'مولد المحتوى', page: 'ContentGenerator', icon: Sparkles },
+  { name: 'مولد المحتوى', page: 'ContentGenerator', icon: Wand2 },
   { name: 'تقارير العملاء', page: 'ClientReports', icon: FileText },
   { name: 'الإعدادات', page: 'Settings', icon: Settings },
 ];

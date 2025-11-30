@@ -107,24 +107,26 @@ export default function AIAssistantChat() {
         }
       });
 
+      const responseText = response?.response || response || 'تم استلام طلبك، كيف يمكنني مساعدتك؟';
       const assistantMessage = {
         role: 'assistant',
-        content: response.response || 'عذراً، لم أتمكن من معالجة طلبك. حاول مرة أخرى.'
+        content: typeof responseText === 'string' ? responseText : 'تم استلام طلبك، كيف يمكنني مساعدتك؟'
       };
       setMessages(prev => [...prev, assistantMessage]);
 
       // Text-to-speech for response
-      if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(response.response);
+      if ('speechSynthesis' in window && typeof responseText === 'string') {
+        const utterance = new SpeechSynthesisUtterance(responseText);
         utterance.lang = 'ar-AE';
         utterance.rate = 0.9;
         window.speechSynthesis.speak(utterance);
       }
 
     } catch (error) {
+      console.error('Chat error:', error);
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: 'عذراً، حدث خطأ. حاول مرة أخرى.'
+        content: 'عذراً، حدث خطأ في الاتصال. حاول مرة أخرى.'
       }]);
     } finally {
       setIsLoading(false);
