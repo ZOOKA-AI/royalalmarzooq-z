@@ -1,6 +1,9 @@
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Star, TrendingUp } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Star, Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '../../utils';
 
 export default function TopServices({ orders = [] }) {
   const topServices = useMemo(() => {
@@ -30,9 +33,21 @@ export default function TopServices({ orders = [] }) {
   if (topServices.length === 0) {
     return (
       <Card className="border-0 shadow-lg">
-        <CardContent className="p-8 text-center text-gray-500">
-          <Star className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-          <p>لا توجد بيانات للعرض</p>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-gray-800">
+            <Star className="h-5 w-5 text-yellow-500" />
+            الخدمات الأكثر طلباً
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-center py-6">
+          <Star className="h-10 w-10 mx-auto text-gray-300 mb-2" />
+          <p className="text-gray-500 text-sm mb-3">لا توجد طلبات بعد</p>
+          <Link to={createPageUrl('Orders')}>
+            <Button size="sm" variant="outline">
+              <Plus className="h-4 w-4 ml-1" />
+              إضافة طلب
+            </Button>
+          </Link>
         </CardContent>
       </Card>
     );

@@ -1,7 +1,10 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { UserCog, Star } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { UserCog, Star, Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '../../utils';
 
 const statusColors = {
   'متاح': 'bg-green-100 text-green-700',
@@ -11,12 +14,24 @@ const statusColors = {
 };
 
 export default function WorkerStatus({ workers = [] }) {
-  if (workers.length === 0) {
+  if (!workers || workers.length === 0) {
     return (
       <Card className="border-0 shadow-lg">
-        <CardContent className="p-8 text-center text-gray-500">
-          <UserCog className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-          <p>لا يوجد عمال مسجلين</p>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-gray-800">
+            <UserCog className="h-5 w-5 text-blue-600" />
+            حالة العمال
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-center py-6">
+          <UserCog className="h-10 w-10 mx-auto text-gray-300 mb-2" />
+          <p className="text-gray-500 text-sm mb-3">لا يوجد عمال بعد</p>
+          <Link to={createPageUrl('Workers')}>
+            <Button size="sm" variant="outline">
+              <Plus className="h-4 w-4 ml-1" />
+              إضافة عامل
+            </Button>
+          </Link>
         </CardContent>
       </Card>
     );

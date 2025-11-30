@@ -1,9 +1,12 @@
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, Plus } from 'lucide-react';
 import { format, subDays, startOfDay } from 'date-fns';
 import { ar } from 'date-fns/locale';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '../../utils';
 
 export default function RevenueChart({ orders = [] }) {
   const chartData = useMemo(() => {
@@ -36,6 +39,7 @@ export default function RevenueChart({ orders = [] }) {
 
   const totalWeekRevenue = chartData.reduce((sum, d) => sum + d.revenue, 0);
   const totalWeekOrders = chartData.reduce((sum, d) => sum + d.orders, 0);
+  const hasData = totalWeekRevenue > 0 || totalWeekOrders > 0;
 
   return (
     <Card className="border-0 shadow-lg">
@@ -45,7 +49,9 @@ export default function RevenueChart({ orders = [] }) {
           إيرادات الأسبوع
         </CardTitle>
         <div className="text-left">
-          <p className="text-2xl font-bold text-green-600">{totalWeekRevenue.toLocaleString()} درهم</p>
+          <p className={`text-2xl font-bold ${hasData ? 'text-green-600' : 'text-gray-400'}`}>
+            {totalWeekRevenue.toLocaleString()} درهم
+          </p>
           <p className="text-xs text-gray-500">{totalWeekOrders} طلب مكتمل</p>
         </div>
       </CardHeader>

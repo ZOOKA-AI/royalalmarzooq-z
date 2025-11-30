@@ -1,7 +1,10 @@
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { BarChart3 } from 'lucide-react';
+import { BarChart3, Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '../../utils';
 
 const COLORS = ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#6366f1', '#14b8a6'];
 
@@ -23,9 +26,21 @@ export default function ServiceChart({ orders = [] }) {
   if (chartData.length === 0) {
     return (
       <Card className="border-0 shadow-lg">
-        <CardContent className="p-8 text-center text-gray-500">
-          <BarChart3 className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-          <p>لا توجد بيانات للعرض</p>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-gray-800">
+            <BarChart3 className="h-5 w-5 text-purple-600" />
+            توزيع الخدمات
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-center py-6">
+          <BarChart3 className="h-10 w-10 mx-auto text-gray-300 mb-2" />
+          <p className="text-gray-500 text-sm mb-3">لا توجد طلبات بعد</p>
+          <Link to={createPageUrl('Orders')}>
+            <Button size="sm" variant="outline">
+              <Plus className="h-4 w-4 ml-1" />
+              إضافة طلب
+            </Button>
+          </Link>
         </CardContent>
       </Card>
     );
