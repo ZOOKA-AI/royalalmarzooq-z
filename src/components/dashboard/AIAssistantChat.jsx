@@ -130,18 +130,52 @@ export default function AIAssistantChat() {
     }
   }, []);
 
-  // تحويل النص إلى كلام
+  // تحويل النص إلى كلام بصوت طبيعي
   const speak = (text) => {
     if (!isSpeechEnabled || !('speechSynthesis' in window)) return;
     
     window.speechSynthesis.cancel();
-    const cleanText = text.replace(/[🌟🏠👋🛠️🛋️🧹🪟💧🍳❄️🐜🏡📞⏰📍😊📱💰✅]/g, '');
+    
+    // تنظيف النص من الإيموجي والرموز
+    const cleanText = text
+      .replace(/[\u{1F300}-\u{1F9FF}]/gu, '') // إزالة كل الإيموجي
+      .replace(/[•\-\*\#\d️⃣✅❌📋💰📞📱⏰📍]/g, '') // إزالة الرموز
+      .replace(/\n+/g, '. ') // تحويل الأسطر الجديدة لوقفات
+      .replace(/\s+/g, ' ') // إزالة المسافات الزائدة
+      .trim();
+    
+    if (!cleanText) return;
+    
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = 'ar-AE';
-    utterance.rate = 0.95;
-    utterance.pitch = 1;
+    
+    // البحث عن أفضل صوت عربي متاح
+    const voices = window.speechSynthesis.getVoices();
+    const arabicVoice = voices.find(v => 
+      v.lang.includes('ar') && (v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Natural'))
+    ) || voices.find(v => v.lang.includes('ar'));
+    
+    if (arabicVoice) {
+      utterance.voice = arabicVoice;
+    }
+    
+    utterance.lang = 'ar-SA'; // العربية السعودية عادة أوضح
+    utterance.rate = 0.85; // أبطأ قليلاً للوضوح
+    utterance.pitch = 1.05; // نبرة طبيعية أكثر
+    utterance.volume = 1;
+    
     window.speechSynthesis.speak(utterance);
   };
+
+  // تحميل الأصوات عند بدء التطبيق
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      // تحميل الأصوات (قد تحتاج وقت للتحميل)
+      window.speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+    }
+  }, []);
 
   const toggleListening = () => {
     // التحقق من دعم المتصفح
