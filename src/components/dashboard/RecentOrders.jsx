@@ -53,7 +53,7 @@ export default function RecentOrders({ orders }) {
                   <Badge className={statusColors[order.status] || 'bg-gray-100'}>
                     {order.status}
                   </Badge>
-                  <span className="font-bold text-purple-600">{order.total} ر.س</span>
+                  <span className="font-bold text-purple-600">{order.total} درهم</span>
                   <Link to={createPageUrl(`Orders?id=${order.id}`)}>
                     <Button variant="ghost" size="icon" className="h-8 w-8">
                       <Eye className="h-4 w-4" />
