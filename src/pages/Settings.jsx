@@ -134,12 +134,16 @@ export default function Settings() {
             href={base44.agents.getWhatsAppConnectURL('royal_clean_assistant')} 
             target="_blank"
             rel="noopener noreferrer"
+            className="block"
           >
             <Button className="w-full bg-green-600 hover:bg-green-700">
               <MessageCircle className="h-4 w-4 ml-2" />
-              ربط الواتساب بالبوت
+              ربط الواتساب بالبوت الذكي
             </Button>
           </a>
+          <p className="text-xs text-gray-500 mt-2 text-center">
+            البوت يفهم استفسارات العملاء ويحجز الطلبات تلقائياً
+          </p>
         </CardContent>
       </Card>
 
