@@ -418,18 +418,39 @@ export default function AIAssistantChat() {
   if (!isOpen) {
     return (
       <div className="fixed bottom-6 left-6 z-[9999]">
+        {/* الوصف العلوي */}
+        <div className="absolute -top-14 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white rounded-full px-4 py-2 shadow-lg border border-purple-100 flex items-center gap-2">
+          <Mic className="h-4 w-4 text-purple-600" />
+          <span className="text-sm font-medium text-gray-700">شات بوت صوتي</span>
+        </div>
+        
+        {/* الزر الرئيسي */}
         <button
           onClick={() => setIsOpen(true)}
-          className="h-16 w-16 rounded-full bg-gradient-to-r from-purple-600 to-purple-700 shadow-2xl hover:shadow-xl transition-all hover:scale-110 border-4 border-white flex items-center justify-center cursor-pointer"
+          className="h-18 w-18 rounded-full bg-gradient-to-r from-purple-600 to-purple-700 shadow-2xl hover:shadow-xl transition-all hover:scale-110 border-4 border-white flex items-center justify-center cursor-pointer relative"
           style={{ 
             animation: 'chatBounce 2s ease-in-out infinite',
+            width: '72px',
+            height: '72px'
           }}
           type="button"
           aria-label="فتح المساعد الذكي"
         >
-          <Bot className="h-8 w-8 text-white" />
+          <div className="flex flex-col items-center">
+            <Bot className="h-7 w-7 text-white" />
+            <Mic className="h-4 w-4 text-white/80 -mt-1" />
+          </div>
         </button>
-        <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white animate-pulse pointer-events-none"></span>
+        
+        {/* مؤشر الاتصال */}
+        <span className="absolute top-0 right-0 w-5 h-5 bg-green-500 rounded-full border-2 border-white animate-pulse pointer-events-none"></span>
+        
+        {/* الوصف السفلي */}
+        <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 whitespace-nowrap bg-purple-600 text-white rounded-full px-3 py-1.5 shadow-lg flex items-center gap-1.5 text-xs font-medium">
+          <Volume2 className="h-3.5 w-3.5" />
+          <span>تحدث معي</span>
+        </div>
+        
         <style>{`
           @keyframes chatBounce {
             0%, 100% { transform: translateY(0); }
