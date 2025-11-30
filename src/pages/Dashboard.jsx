@@ -9,6 +9,8 @@ import ServiceChart from '../components/dashboard/ServiceChart';
 import RevenueChart from '../components/dashboard/RevenueChart';
 import TopServices from '../components/dashboard/TopServices';
 import WorkerStatus from '../components/dashboard/WorkerStatus';
+import SocialLinks from '../components/dashboard/SocialLinks';
+import AIAssistantChat from '../components/dashboard/AIAssistantChat';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity } from 'lucide-react';
 
@@ -113,6 +115,9 @@ export default function Dashboard() {
         <div className="space-y-6">
           <WorkerStatus workers={workers} />
           
+          {/* Social Links */}
+          <SocialLinks />
+          
           {/* Status Summary */}
           <Card className="border-0 shadow-lg">
             <CardHeader>
@@ -132,6 +137,9 @@ export default function Dashboard() {
           </Card>
         </div>
       </div>
+
+      {/* AI Assistant Chat Bot */}
+      <AIAssistantChat />
     </div>
   );
 }
