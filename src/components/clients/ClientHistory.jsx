@@ -3,8 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -12,26 +14,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { 
-  Phone, MessageCircle, MapPin, FileText, Plus, Calendar,
-  ClipboardList, DollarSign, CheckCircle, Clock, X
+  ClipboardList, Phone, MessageSquare, Calendar, Plus, 
+  DollarSign, CheckCircle, Clock, XCircle
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-
-const typeIcons = {
-  'مكالمة': Phone,
-  'واتساب': MessageCircle,
-  'زيارة': MapPin,
-  'ملاحظة': FileText
-};
-
-const outcomeColors = {
-  'ناجح': 'bg-green-100 text-green-700',
-  'متابعة': 'bg-yellow-100 text-yellow-700',
-  'ملغي': 'bg-red-100 text-red-700',
-  'لم يرد': 'bg-gray-100 text-gray-700'
-};
 
 const statusColors = {
   'جديد': 'bg-blue-100 text-blue-700',
@@ -41,22 +35,36 @@ const statusColors = {
   'ملغي': 'bg-red-100 text-red-700',
 };
 
+const resultColors = {
+  'ناجح': 'bg-green-100 text-green-700',
+  'لم يرد': 'bg-yellow-100 text-yellow-700',
+  'مؤجل': 'bg-blue-100 text-blue-700',
+  'غير مهتم': 'bg-red-100 text-red-700',
+};
+
+const typeIcons = {
+  'مكالمة': Phone,
+  'واتساب': MessageSquare,
+  'زيارة': Calendar,
+  'ملاحظة': ClipboardList,
+};
+
 export default function ClientHistory({ client, onClose }) {
-  const [showAddLog, setShowAddLog] = useState(false);
-  const [logForm, setLogForm] = useState({
+  const [showLogForm, setShowLogForm] = useState(false);
+  const [logData, setLogData] = useState({
     type: 'مكالمة',
     notes: '',
-    outcome: 'ناجح'
+    result: 'ناجح'
   });
-  
+
   const queryClient = useQueryClient();
 
-  const { data: orders = [], isLoading: ordersLoading } = useQuery({
+  const { data: orders = [] } = useQuery({
     queryKey: ['client-orders', client.id],
     queryFn: () => base44.entities.Order.filter({ client_id: client.id }, '-created_date'),
   });
 
-  const { data: logs = [], isLoading: logsLoading } = useQuery({
+  const { data: logs = [] } = useQuery({
     queryKey: ['client-logs', client.id],
     queryFn: () => base44.entities.CommunicationLog.filter({ client_id: client.id }, '-created_date'),
   });
@@ -65,188 +73,177 @@ export default function ClientHistory({ client, onClose }) {
     mutationFn: (data) => base44.entities.CommunicationLog.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['client-logs', client.id] });
-      setShowAddLog(false);
-      setLogForm({ type: 'مكالمة', notes: '', outcome: 'ناجح' });
+      setShowLogForm(false);
+      setLogData({ type: 'مكالمة', notes: '', result: 'ناجح' });
       toast.success('تم إضافة سجل التواصل');
-    }
+    },
   });
 
   const handleAddLog = () => {
     createLogMutation.mutate({
       client_id: client.id,
-      ...logForm
+      ...logData
     });
   };
 
   const totalSpent = orders.filter(o => o.status === 'مكتمل').reduce((sum, o) => sum + (o.total || 0), 0);
-  const completedOrders = orders.filter(o => o.status === 'مكتمل').length;
 
   return (
     <div className="space-y-6">
-      {/* ملخص العميل */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="border-0 bg-purple-50">
+      {/* إحصائيات سريعة */}
+      <div className="grid grid-cols-3 gap-4">
+        <Card className="border-purple-100">
           <CardContent className="p-4 text-center">
             <ClipboardList className="h-6 w-6 mx-auto text-purple-600 mb-2" />
-            <p className="text-2xl font-bold text-purple-700">{orders.length}</p>
-            <p className="text-xs text-purple-600">إجمالي الطلبات</p>
+            <p className="text-2xl font-bold text-gray-800">{orders.length}</p>
+            <p className="text-xs text-gray-500">إجمالي الطلبات</p>
           </CardContent>
         </Card>
-        <Card className="border-0 bg-green-50">
+        <Card className="border-green-100">
           <CardContent className="p-4 text-center">
-            <CheckCircle className="h-6 w-6 mx-auto text-green-600 mb-2" />
-            <p className="text-2xl font-bold text-green-700">{completedOrders}</p>
-            <p className="text-xs text-green-600">مكتملة</p>
+            <DollarSign className="h-6 w-6 mx-auto text-green-600 mb-2" />
+            <p className="text-2xl font-bold text-gray-800">{totalSpent}</p>
+            <p className="text-xs text-gray-500">درهم إجمالي</p>
           </CardContent>
         </Card>
-        <Card className="border-0 bg-blue-50">
+        <Card className="border-blue-100">
           <CardContent className="p-4 text-center">
-            <DollarSign className="h-6 w-6 mx-auto text-blue-600 mb-2" />
-            <p className="text-2xl font-bold text-blue-700">{totalSpent.toLocaleString()}</p>
-            <p className="text-xs text-blue-600">درهم إجمالي</p>
-          </CardContent>
-        </Card>
-        <Card className="border-0 bg-orange-50">
-          <CardContent className="p-4 text-center">
-            <MessageCircle className="h-6 w-6 mx-auto text-orange-600 mb-2" />
-            <p className="text-2xl font-bold text-orange-700">{logs.length}</p>
-            <p className="text-xs text-orange-600">سجلات تواصل</p>
+            <Phone className="h-6 w-6 mx-auto text-blue-600 mb-2" />
+            <p className="text-2xl font-bold text-gray-800">{logs.length}</p>
+            <p className="text-xs text-gray-500">سجلات تواصل</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* سجل الطلبات */}
-      <Card className="border-0 shadow-lg">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <ClipboardList className="h-5 w-5 text-purple-600" />
-            سجل الطلبات
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {ordersLoading ? (
-            <div className="text-center py-4 text-gray-500">جاري التحميل...</div>
-          ) : orders.length === 0 ? (
-            <div className="text-center py-4 text-gray-500">لا توجد طلبات سابقة</div>
+      <Tabs defaultValue="orders" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="orders">الطلبات ({orders.length})</TabsTrigger>
+          <TabsTrigger value="logs">سجل التواصل ({logs.length})</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="orders" className="space-y-3 mt-4">
+          {orders.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <ClipboardList className="h-12 w-12 mx-auto text-gray-300 mb-2" />
+              <p>لا توجد طلبات سابقة</p>
+            </div>
           ) : (
-            <div className="space-y-3 max-h-64 overflow-y-auto">
-              {orders.map(order => (
-                <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                      <ClipboardList className="h-5 w-5 text-purple-600" />
-                    </div>
+            orders.map(order => (
+              <Card key={order.id} className="border-0 shadow-sm">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-gray-800">{order.service_name}</p>
-                      <p className="text-xs text-gray-500 flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {order.created_date ? format(new Date(order.created_date), 'yyyy/MM/dd') : '-'}
+                      <p className="font-bold text-gray-800">{order.service_name}</p>
+                      <p className="text-sm text-gray-500">
+                        {order.created_date && format(new Date(order.created_date), 'yyyy/MM/dd')}
                       </p>
                     </div>
+                    <div className="text-left">
+                      <Badge className={statusColors[order.status]}>{order.status}</Badge>
+                      <p className="text-lg font-bold text-purple-600 mt-1">{order.total} درهم</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge className={statusColors[order.status]}>{order.status}</Badge>
-                    <span className="font-bold text-purple-600">{order.total || 0} درهم</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+                </CardContent>
+              </Card>
+            ))
           )}
-        </CardContent>
-      </Card>
+        </TabsContent>
 
-      {/* سجل التواصل */}
-      <Card className="border-0 shadow-lg">
-        <CardHeader className="pb-2 flex flex-row items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <MessageCircle className="h-5 w-5 text-orange-600" />
-            سجل التواصل
-          </CardTitle>
+        <TabsContent value="logs" className="space-y-3 mt-4">
           <Button 
-            size="sm" 
-            onClick={() => setShowAddLog(!showAddLog)}
-            className="bg-orange-600 hover:bg-orange-700"
+            onClick={() => setShowLogForm(true)}
+            className="w-full bg-purple-600 hover:bg-purple-700"
           >
-            <Plus className="h-4 w-4 ml-1" />
-            إضافة
+            <Plus className="h-4 w-4 ml-2" />
+            إضافة سجل تواصل
           </Button>
-        </CardHeader>
-        <CardContent>
-          {/* نموذج إضافة سجل */}
-          {showAddLog && (
-            <div className="mb-4 p-4 bg-orange-50 rounded-lg space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <Select value={logForm.type} onValueChange={(v) => setLogForm({...logForm, type: v})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="نوع التواصل" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="مكالمة">📞 مكالمة</SelectItem>
-                    <SelectItem value="واتساب">💬 واتساب</SelectItem>
-                    <SelectItem value="زيارة">📍 زيارة</SelectItem>
-                    <SelectItem value="ملاحظة">📝 ملاحظة</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={logForm.outcome} onValueChange={(v) => setLogForm({...logForm, outcome: v})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="النتيجة" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ناجح">✅ ناجح</SelectItem>
-                    <SelectItem value="متابعة">⏳ متابعة</SelectItem>
-                    <SelectItem value="ملغي">❌ ملغي</SelectItem>
-                    <SelectItem value="لم يرد">📵 لم يرد</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Textarea
-                placeholder="ملاحظات التواصل..."
-                value={logForm.notes}
-                onChange={(e) => setLogForm({...logForm, notes: e.target.value})}
-                rows={2}
-              />
-              <div className="flex gap-2">
-                <Button onClick={handleAddLog} className="bg-orange-600 hover:bg-orange-700">
-                  حفظ
-                </Button>
-                <Button variant="outline" onClick={() => setShowAddLog(false)}>
-                  إلغاء
-                </Button>
-              </div>
-            </div>
-          )}
 
-          {/* قائمة السجلات */}
-          {logsLoading ? (
-            <div className="text-center py-4 text-gray-500">جاري التحميل...</div>
-          ) : logs.length === 0 ? (
-            <div className="text-center py-4 text-gray-500">لا توجد سجلات تواصل</div>
-          ) : (
-            <div className="space-y-3 max-h-64 overflow-y-auto">
-              {logs.map(log => {
-                const Icon = typeIcons[log.type] || FileText;
-                return (
-                  <div key={log.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                    <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center shrink-0">
-                      <Icon className="h-5 w-5 text-orange-600" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-medium text-gray-800">{log.type}</span>
-                        <Badge className={outcomeColors[log.outcome]}>{log.outcome}</Badge>
-                        <span className="text-xs text-gray-400">
-                          {log.created_date ? format(new Date(log.created_date), 'yyyy/MM/dd HH:mm') : '-'}
-                        </span>
-                      </div>
-                      {log.notes && <p className="text-sm text-gray-600 mt-1">{log.notes}</p>}
-                    </div>
-                  </div>
-                );
-              })}
+          {logs.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <MessageSquare className="h-12 w-12 mx-auto text-gray-300 mb-2" />
+              <p>لا توجد سجلات تواصل</p>
             </div>
+          ) : (
+            logs.map(log => {
+              const Icon = typeIcons[log.type] || Phone;
+              return (
+                <Card key={log.id} className="border-0 shadow-sm">
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                        <Icon className="h-5 w-5 text-purple-600" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-gray-800">{log.type}</span>
+                          {log.result && (
+                            <Badge className={resultColors[log.result]}>{log.result}</Badge>
+                          )}
+                        </div>
+                        {log.notes && <p className="text-sm text-gray-600 mt-1">{log.notes}</p>}
+                        <p className="text-xs text-gray-400 mt-1">
+                          {log.created_date && format(new Date(log.created_date), 'yyyy/MM/dd - HH:mm')}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })
           )}
-        </CardContent>
-      </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* نموذج إضافة سجل تواصل */}
+      <Dialog open={showLogForm} onOpenChange={setShowLogForm}>
+        <DialogContent dir="rtl">
+          <DialogHeader>
+            <DialogTitle>إضافة سجل تواصل</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium">نوع التواصل</label>
+              <Select value={logData.type} onValueChange={(v) => setLogData({...logData, type: v})}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="مكالمة">مكالمة</SelectItem>
+                  <SelectItem value="واتساب">واتساب</SelectItem>
+                  <SelectItem value="زيارة">زيارة</SelectItem>
+                  <SelectItem value="ملاحظة">ملاحظة</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium">النتيجة</label>
+              <Select value={logData.result} onValueChange={(v) => setLogData({...logData, result: v})}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ناجح">ناجح</SelectItem>
+                  <SelectItem value="لم يرد">لم يرد</SelectItem>
+                  <SelectItem value="مؤجل">مؤجل</SelectItem>
+                  <SelectItem value="غير مهتم">غير مهتم</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium">التفاصيل</label>
+              <Textarea
+                value={logData.notes}
+                onChange={(e) => setLogData({...logData, notes: e.target.value})}
+                placeholder="اكتب تفاصيل التواصل..."
+                rows={3}
+              />
+            </div>
+            <Button onClick={handleAddLog} className="w-full bg-purple-600 hover:bg-purple-700">
+              حفظ
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
