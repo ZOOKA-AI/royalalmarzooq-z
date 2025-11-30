@@ -381,7 +381,7 @@ export default function Orders() {
                       {order.payment_status}
                     </Badge>
                     
-                    <span className="font-bold text-purple-600 text-lg">{order.total} ر.س</span>
+                    <span className="font-bold text-purple-600 text-lg">{order.total} درهم</span>
                     
                     <div className="flex gap-1">
                       <Button variant="ghost" size="icon" onClick={() => setViewingOrder(order)}>
@@ -466,17 +466,17 @@ export default function Orders() {
                 <CardContent className="space-y-2">
                   <div className="flex justify-between">
                     <span>السعر</span>
-                    <span>{viewingOrder.price} ر.س</span>
+                    <span>{viewingOrder.price} درهم</span>
                   </div>
                   {viewingOrder.discount > 0 && (
                     <div className="flex justify-between text-red-500">
                       <span>الخصم</span>
-                      <span>-{viewingOrder.discount} ر.س</span>
+                      <span>-{viewingOrder.discount} درهم</span>
                     </div>
                   )}
                   <div className="flex justify-between font-bold text-lg border-t pt-2">
                     <span>الإجمالي</span>
-                    <span className="text-purple-600">{viewingOrder.total} ر.س</span>
+                    <span className="text-purple-600">{viewingOrder.total} درهم</span>
                   </div>
                   {viewingOrder.payment_method && (
                     <p className="text-sm text-gray-500">طريقة الدفع: {viewingOrder.payment_method}</p>
@@ -576,7 +576,7 @@ export default function Orders() {
                     </SelectTrigger>
                     <SelectContent>
                       {services.map(s => (
-                        <SelectItem key={s.id} value={s.id}>{s.name} - {s.price} ر.س</SelectItem>
+                        <SelectItem key={s.id} value={s.id}>{s.name} - {s.price} درهم</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>

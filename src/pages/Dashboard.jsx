@@ -64,7 +64,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">لوحة التحكم</h1>
-          <p className="text-gray-500">مرحباً بك في مركز عمليات Royal Clean</p>
+          <p className="text-gray-500">مرحباً بك في شركة رويال للتنظيف والتعقيم ومكافحة الحشرات</p>
         </div>
       </div>
 
@@ -72,7 +72,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard 
           title="إجمالي الإيرادات"
-          value={`${totalRevenue.toLocaleString()} ر.س`}
+          value={`${totalRevenue.toLocaleString()} درهم`}
           icon={DollarSign}
           color="green"
         />
