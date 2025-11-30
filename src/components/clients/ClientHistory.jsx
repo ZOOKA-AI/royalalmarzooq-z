@@ -4,10 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -15,19 +12,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { 
-  ClipboardList, Phone, MessageSquare, Calendar, DollarSign, 
-  Plus, ArrowLeft, ArrowRight, Clock, CheckCircle, XCircle,
-  PhoneCall, Mail, MapPin, User
+  Phone, MessageCircle, MapPin, FileText, Plus, Calendar,
+  ClipboardList, DollarSign, CheckCircle, Clock, X
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+
+const typeIcons = {
+  'مكالمة': Phone,
+  'واتساب': MessageCircle,
+  'زيارة': MapPin,
+  'ملاحظة': FileText
+};
+
+const outcomeColors = {
+  'ناجح': 'bg-green-100 text-green-700',
+  'متابعة': 'bg-yellow-100 text-yellow-700',
+  'ملغي': 'bg-red-100 text-red-700',
+  'لم يرد': 'bg-gray-100 text-gray-700'
+};
 
 const statusColors = {
   'جديد': 'bg-blue-100 text-blue-700',
@@ -37,294 +41,212 @@ const statusColors = {
   'ملغي': 'bg-red-100 text-red-700',
 };
 
-const outcomeColors = {
-  'تم الحجز': 'bg-green-100 text-green-700',
-  'مهتم': 'bg-blue-100 text-blue-700',
-  'غير مهتم': 'bg-red-100 text-red-700',
-  'متابعة لاحقة': 'bg-yellow-100 text-yellow-700',
-  'لم يرد': 'bg-gray-100 text-gray-700',
-};
-
-const communicationTypes = ['اتصال', 'واتساب', 'زيارة', 'بريد', 'أخرى'];
-const directions = ['وارد', 'صادر'];
-const outcomes = ['تم الحجز', 'مهتم', 'غير مهتم', 'متابعة لاحقة', 'لم يرد'];
-
 export default function ClientHistory({ client, onClose }) {
-  const [showLogForm, setShowLogForm] = useState(false);
-  const [logData, setLogData] = useState({
-    type: 'اتصال',
-    direction: 'صادر',
-    summary: '',
-    outcome: '',
+  const [showAddLog, setShowAddLog] = useState(false);
+  const [logForm, setLogForm] = useState({
+    type: 'مكالمة',
     notes: '',
-    follow_up_date: ''
+    outcome: 'ناجح'
   });
-
+  
   const queryClient = useQueryClient();
 
-  const { data: orders = [] } = useQuery({
+  const { data: orders = [], isLoading: ordersLoading } = useQuery({
     queryKey: ['client-orders', client.id],
-    queryFn: async () => {
-      const allOrders = await base44.entities.Order.list('-created_date');
-      return allOrders.filter(o => o.client_id === client.id || o.client_phone === client.phone);
-    },
+    queryFn: () => base44.entities.Order.filter({ client_id: client.id }, '-created_date'),
   });
 
-  const { data: logs = [] } = useQuery({
-    queryKey: ['communication-logs', client.id],
+  const { data: logs = [], isLoading: logsLoading } = useQuery({
+    queryKey: ['client-logs', client.id],
     queryFn: () => base44.entities.CommunicationLog.filter({ client_id: client.id }, '-created_date'),
   });
 
   const createLogMutation = useMutation({
-    mutationFn: (data) => base44.entities.CommunicationLog.create({
-      ...data,
-      client_id: client.id
-    }),
+    mutationFn: (data) => base44.entities.CommunicationLog.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['communication-logs', client.id] });
-      setShowLogForm(false);
-      setLogData({ type: 'اتصال', direction: 'صادر', summary: '', outcome: '', notes: '', follow_up_date: '' });
-      toast.success('تم حفظ سجل التواصل');
-    },
+      queryClient.invalidateQueries({ queryKey: ['client-logs', client.id] });
+      setShowAddLog(false);
+      setLogForm({ type: 'مكالمة', notes: '', outcome: 'ناجح' });
+      toast.success('تم إضافة سجل التواصل');
+    }
   });
+
+  const handleAddLog = () => {
+    createLogMutation.mutate({
+      client_id: client.id,
+      ...logForm
+    });
+  };
 
   const totalSpent = orders.filter(o => o.status === 'مكتمل').reduce((sum, o) => sum + (o.total || 0), 0);
   const completedOrders = orders.filter(o => o.status === 'مكتمل').length;
 
   return (
     <div className="space-y-6">
-      {/* Client Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="border-0 shadow bg-gradient-to-br from-purple-50 to-white">
+      {/* ملخص العميل */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <Card className="border-0 bg-purple-50">
           <CardContent className="p-4 text-center">
             <ClipboardList className="h-6 w-6 mx-auto text-purple-600 mb-2" />
-            <p className="text-2xl font-bold text-purple-600">{orders.length}</p>
-            <p className="text-xs text-gray-500">إجمالي الطلبات</p>
+            <p className="text-2xl font-bold text-purple-700">{orders.length}</p>
+            <p className="text-xs text-purple-600">إجمالي الطلبات</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow bg-gradient-to-br from-green-50 to-white">
+        <Card className="border-0 bg-green-50">
           <CardContent className="p-4 text-center">
             <CheckCircle className="h-6 w-6 mx-auto text-green-600 mb-2" />
-            <p className="text-2xl font-bold text-green-600">{completedOrders}</p>
-            <p className="text-xs text-gray-500">مكتملة</p>
+            <p className="text-2xl font-bold text-green-700">{completedOrders}</p>
+            <p className="text-xs text-green-600">مكتملة</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow bg-gradient-to-br from-blue-50 to-white">
+        <Card className="border-0 bg-blue-50">
           <CardContent className="p-4 text-center">
             <DollarSign className="h-6 w-6 mx-auto text-blue-600 mb-2" />
-            <p className="text-2xl font-bold text-blue-600">{totalSpent.toLocaleString()}</p>
-            <p className="text-xs text-gray-500">درهم مصروف</p>
+            <p className="text-2xl font-bold text-blue-700">{totalSpent.toLocaleString()}</p>
+            <p className="text-xs text-blue-600">درهم إجمالي</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow bg-gradient-to-br from-orange-50 to-white">
+        <Card className="border-0 bg-orange-50">
           <CardContent className="p-4 text-center">
-            <MessageSquare className="h-6 w-6 mx-auto text-orange-600 mb-2" />
-            <p className="text-2xl font-bold text-orange-600">{logs.length}</p>
-            <p className="text-xs text-gray-500">سجل تواصل</p>
+            <MessageCircle className="h-6 w-6 mx-auto text-orange-600 mb-2" />
+            <p className="text-2xl font-bold text-orange-700">{logs.length}</p>
+            <p className="text-xs text-orange-600">سجلات تواصل</p>
           </CardContent>
         </Card>
       </div>
 
-      <Tabs defaultValue="orders" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="orders" className="flex items-center gap-2">
-            <ClipboardList className="h-4 w-4" />
-            الطلبات ({orders.length})
-          </TabsTrigger>
-          <TabsTrigger value="logs" className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4" />
-            سجل التواصل ({logs.length})
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Orders Tab */}
-        <TabsContent value="orders" className="mt-4">
-          {orders.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <ClipboardList className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-              <p>لا توجد طلبات لهذا العميل</p>
-            </div>
+      {/* سجل الطلبات */}
+      <Card className="border-0 shadow-lg">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <ClipboardList className="h-5 w-5 text-purple-600" />
+            سجل الطلبات
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {ordersLoading ? (
+            <div className="text-center py-4 text-gray-500">جاري التحميل...</div>
+          ) : orders.length === 0 ? (
+            <div className="text-center py-4 text-gray-500">لا توجد طلبات سابقة</div>
           ) : (
-            <div className="space-y-3 max-h-[400px] overflow-y-auto">
-              {orders.map((order) => (
-                <Card key={order.id} className="border shadow-sm hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-bold text-gray-800">{order.service_name}</span>
-                          <Badge className={statusColors[order.status]}>{order.status}</Badge>
-                        </div>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            {order.created_date ? format(new Date(order.created_date), 'yyyy/MM/dd') : '-'}
-                          </span>
-                          {order.scheduled_date && (
-                            <span className="flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
-                              موعد: {format(new Date(order.scheduled_date), 'MM/dd')}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="text-left">
-                        <p className="font-bold text-purple-600 text-lg">{order.total || 0} درهم</p>
-                        <p className="text-xs text-gray-400">#{order.order_number?.slice(-6)}</p>
-                      </div>
+            <div className="space-y-3 max-h-64 overflow-y-auto">
+              {orders.map(order => (
+                <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                      <ClipboardList className="h-5 w-5 text-purple-600" />
                     </div>
-                  </CardContent>
-                </Card>
+                    <div>
+                      <p className="font-medium text-gray-800">{order.service_name}</p>
+                      <p className="text-xs text-gray-500 flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {order.created_date ? format(new Date(order.created_date), 'yyyy/MM/dd') : '-'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge className={statusColors[order.status]}>{order.status}</Badge>
+                    <span className="font-bold text-purple-600">{order.total || 0} درهم</span>
+                  </div>
+                </div>
               ))}
             </div>
           )}
-        </TabsContent>
+        </CardContent>
+      </Card>
 
-        {/* Communication Logs Tab */}
-        <TabsContent value="logs" className="mt-4">
-          <div className="mb-4">
-            <Button 
-              onClick={() => setShowLogForm(true)}
-              className="bg-purple-600 hover:bg-purple-700"
-            >
-              <Plus className="h-4 w-4 ml-2" />
-              إضافة سجل تواصل
-            </Button>
-          </div>
-
-          {logs.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <MessageSquare className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-              <p>لا يوجد سجل تواصل</p>
-            </div>
-          ) : (
-            <div className="space-y-3 max-h-[350px] overflow-y-auto">
-              {logs.map((log) => (
-                <Card key={log.id} className="border shadow-sm">
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Badge variant="outline" className="flex items-center gap-1">
-                            {log.type === 'اتصال' && <PhoneCall className="h-3 w-3" />}
-                            {log.type === 'واتساب' && <MessageSquare className="h-3 w-3" />}
-                            {log.type === 'بريد' && <Mail className="h-3 w-3" />}
-                            {log.type === 'زيارة' && <MapPin className="h-3 w-3" />}
-                            {log.type}
-                          </Badge>
-                          <Badge variant="outline" className={log.direction === 'وارد' ? 'text-green-600' : 'text-blue-600'}>
-                            {log.direction === 'وارد' ? <ArrowLeft className="h-3 w-3 ml-1" /> : <ArrowRight className="h-3 w-3 ml-1" />}
-                            {log.direction}
-                          </Badge>
-                          {log.outcome && (
-                            <Badge className={outcomeColors[log.outcome]}>{log.outcome}</Badge>
-                          )}
-                        </div>
-                        <p className="text-gray-700 mb-1">{log.summary}</p>
-                        {log.notes && <p className="text-sm text-gray-500">{log.notes}</p>}
-                        {log.follow_up_date && (
-                          <p className="text-xs text-orange-600 mt-2 flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            متابعة: {format(new Date(log.follow_up_date), 'yyyy/MM/dd')}
-                          </p>
-                        )}
-                      </div>
-                      <div className="text-xs text-gray-400">
-                        {log.created_date && format(new Date(log.created_date), 'MM/dd HH:mm')}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+      {/* سجل التواصل */}
+      <Card className="border-0 shadow-lg">
+        <CardHeader className="pb-2 flex flex-row items-center justify-between">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <MessageCircle className="h-5 w-5 text-orange-600" />
+            سجل التواصل
+          </CardTitle>
+          <Button 
+            size="sm" 
+            onClick={() => setShowAddLog(!showAddLog)}
+            className="bg-orange-600 hover:bg-orange-700"
+          >
+            <Plus className="h-4 w-4 ml-1" />
+            إضافة
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {/* نموذج إضافة سجل */}
+          {showAddLog && (
+            <div className="mb-4 p-4 bg-orange-50 rounded-lg space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <Select value={logForm.type} onValueChange={(v) => setLogForm({...logForm, type: v})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="نوع التواصل" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="مكالمة">📞 مكالمة</SelectItem>
+                    <SelectItem value="واتساب">💬 واتساب</SelectItem>
+                    <SelectItem value="زيارة">📍 زيارة</SelectItem>
+                    <SelectItem value="ملاحظة">📝 ملاحظة</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={logForm.outcome} onValueChange={(v) => setLogForm({...logForm, outcome: v})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="النتيجة" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ناجح">✅ ناجح</SelectItem>
+                    <SelectItem value="متابعة">⏳ متابعة</SelectItem>
+                    <SelectItem value="ملغي">❌ ملغي</SelectItem>
+                    <SelectItem value="لم يرد">📵 لم يرد</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Textarea
+                placeholder="ملاحظات التواصل..."
+                value={logForm.notes}
+                onChange={(e) => setLogForm({...logForm, notes: e.target.value})}
+                rows={2}
+              />
+              <div className="flex gap-2">
+                <Button onClick={handleAddLog} className="bg-orange-600 hover:bg-orange-700">
+                  حفظ
+                </Button>
+                <Button variant="outline" onClick={() => setShowAddLog(false)}>
+                  إلغاء
+                </Button>
+              </div>
             </div>
           )}
-        </TabsContent>
-      </Tabs>
 
-      {/* Add Communication Log Dialog */}
-      <Dialog open={showLogForm} onOpenChange={setShowLogForm}>
-        <DialogContent dir="rtl">
-          <DialogHeader>
-            <DialogTitle>إضافة سجل تواصل</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>نوع التواصل</Label>
-                <Select value={logData.type} onValueChange={(v) => setLogData({...logData, type: v})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {communicationTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>الاتجاه</Label>
-                <Select value={logData.direction} onValueChange={(v) => setLogData({...logData, direction: v})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {directions.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
+          {/* قائمة السجلات */}
+          {logsLoading ? (
+            <div className="text-center py-4 text-gray-500">جاري التحميل...</div>
+          ) : logs.length === 0 ? (
+            <div className="text-center py-4 text-gray-500">لا توجد سجلات تواصل</div>
+          ) : (
+            <div className="space-y-3 max-h-64 overflow-y-auto">
+              {logs.map(log => {
+                const Icon = typeIcons[log.type] || FileText;
+                return (
+                  <div key={log.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                    <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center shrink-0">
+                      <Icon className="h-5 w-5 text-orange-600" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-medium text-gray-800">{log.type}</span>
+                        <Badge className={outcomeColors[log.outcome]}>{log.outcome}</Badge>
+                        <span className="text-xs text-gray-400">
+                          {log.created_date ? format(new Date(log.created_date), 'yyyy/MM/dd HH:mm') : '-'}
+                        </span>
+                      </div>
+                      {log.notes && <p className="text-sm text-gray-600 mt-1">{log.notes}</p>}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-            <div>
-              <Label>ملخص التواصل *</Label>
-              <Textarea
-                value={logData.summary}
-                onChange={(e) => setLogData({...logData, summary: e.target.value})}
-                placeholder="ماذا تم في هذا التواصل؟"
-                rows={2}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>النتيجة</Label>
-                <Select value={logData.outcome} onValueChange={(v) => setLogData({...logData, outcome: v})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {outcomes.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>تاريخ المتابعة</Label>
-                <Input
-                  type="date"
-                  value={logData.follow_up_date}
-                  onChange={(e) => setLogData({...logData, follow_up_date: e.target.value})}
-                />
-              </div>
-            </div>
-            <div>
-              <Label>ملاحظات إضافية</Label>
-              <Textarea
-                value={logData.notes}
-                onChange={(e) => setLogData({...logData, notes: e.target.value})}
-                rows={2}
-              />
-            </div>
-            <div className="flex gap-3">
-              <Button 
-                onClick={() => createLogMutation.mutate(logData)}
-                disabled={!logData.summary.trim()}
-                className="flex-1 bg-purple-600 hover:bg-purple-700"
-              >
-                حفظ
-              </Button>
-              <Button variant="outline" onClick={() => setShowLogForm(false)}>
-                إلغاء
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
