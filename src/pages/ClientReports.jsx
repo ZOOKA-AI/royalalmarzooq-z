@@ -2,10 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { 
-  FileText, Users, TrendingUp, ShoppingBag, Calendar, Filter,
-  Download, RefreshCw, UserPlus, DollarSign, BarChart3
+  FileText, Users, TrendingUp, ShoppingBag, Calendar, Filter, Download,
+  UserPlus, DollarSign, Star, BarChart3
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -18,12 +18,12 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, subDays, subMonths, isAfter, parseISO } from 'date-fns';
 import { ar } from 'date-fns/locale';
-import {
+import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, Legend
 } from 'recharts';
 
-const COLORS = ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#6366f1', '#84cc16'];
+const COLORS = ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#6366f1', '#14b8a6'];
 
 const categories = [
   'الكل', 'تنظيف كنب', 'تنظيف سجاد', 'تنظيف ستائر', 'تنظيف خزانات', 
@@ -32,7 +32,7 @@ const categories = [
   'مكافحة حشرات', 'أسلاك طاردة للحمام'
 ];
 
-const dateRanges = [
+const timeRanges = [
   { value: '7', label: 'آخر 7 أيام' },
   { value: '30', label: 'آخر 30 يوم' },
   { value: '90', label: 'آخر 3 أشهر' },
@@ -45,147 +45,141 @@ export default function ClientReports() {
   const [dateRange, setDateRange] = useState('30');
   const [serviceFilter, setServiceFilter] = useState('الكل');
 
-  const { data: clients = [], isLoading: clientsLoading, refetch: refetchClients } = useQuery({
+  const { data: clients = [], isLoading: clientsLoading } = useQuery({
     queryKey: ['clients'],
-    queryFn: () => base44.entities.Client.list('-created_date'),
+    queryFn: () => base44.entities.Client.list(),
   });
 
-  const { data: orders = [], isLoading: ordersLoading, refetch: refetchOrders } = useQuery({
+  const { data: orders = [], isLoading: ordersLoading } = useQuery({
     queryKey: ['orders'],
-    queryFn: () => base44.entities.Order.list('-created_date'),
+    queryFn: () => base44.entities.Order.list(),
   });
 
   const isLoading = clientsLoading || ordersLoading;
 
-  // Filter data based on date range
-  const getFilteredData = useMemo(() => {
-    const now = new Date();
-    let startDate = null;
-    
-    if (dateRange !== 'all') {
-      startDate = subDays(now, parseInt(dateRange));
-    }
+  // Filter data based on date range and service
+  const filteredData = useMemo(() => {
+    const startDate = dateRange === 'all' 
+      ? new Date(0) 
+      : subDays(new Date(), parseInt(dateRange));
 
-    const filteredClients = clients.filter(client => {
-      if (!startDate) return true;
-      const createdDate = client.created_date ? parseISO(client.created_date) : null;
-      return createdDate && isAfter(createdDate, startDate);
-    });
-
+    // Filter orders by date and service
     const filteredOrders = orders.filter(order => {
-      const matchesDate = !startDate || (order.created_date && isAfter(parseISO(order.created_date), startDate));
-      const matchesService = serviceFilter === 'الكل' || order.service_name?.includes(serviceFilter);
-      return matchesDate && matchesService;
+      const orderDate = order.created_date ? parseISO(order.created_date) : new Date(0);
+      const dateMatch = isAfter(orderDate, startDate);
+      const serviceMatch = serviceFilter === 'الكل' || order.service_name?.includes(serviceFilter);
+      return dateMatch && serviceMatch;
     });
 
-    return { filteredClients, filteredOrders, startDate };
-  }, [clients, orders, dateRange, serviceFilter]);
+    // Filter clients by date
+    const filteredClients = clients.filter(client => {
+      const clientDate = client.created_date ? parseISO(client.created_date) : new Date(0);
+      return isAfter(clientDate, startDate);
+    });
+
+    return { filteredOrders, filteredClients, startDate };
+  }, [orders, clients, dateRange, serviceFilter]);
 
   // Calculate statistics
   const stats = useMemo(() => {
-    const { filteredClients, filteredOrders } = getFilteredData;
-    
+    const { filteredOrders, filteredClients } = filteredData;
+
+    // Total clients
     const totalClients = clients.length;
     const newClients = filteredClients.length;
-    const totalRevenue = filteredOrders.reduce((sum, o) => sum + (o.total || 0), 0);
-    const avgOrderValue = filteredOrders.length > 0 ? totalRevenue / filteredOrders.length : 0;
+
+    // Orders stats
+    const totalOrders = filteredOrders.length;
     const completedOrders = filteredOrders.filter(o => o.status === 'مكتمل').length;
-    
-    // Client with most orders
-    const clientOrderCounts = {};
+    const totalRevenue = filteredOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+
+    // Average order value per client
+    const clientOrderMap = {};
     filteredOrders.forEach(order => {
-      const clientName = order.client_name || 'غير معروف';
-      clientOrderCounts[clientName] = (clientOrderCounts[clientName] || 0) + 1;
+      const clientId = order.client_id || order.client_phone;
+      if (!clientOrderMap[clientId]) {
+        clientOrderMap[clientId] = { count: 0, total: 0 };
+      }
+      clientOrderMap[clientId].count++;
+      clientOrderMap[clientId].total += order.total || 0;
     });
-    const topClient = Object.entries(clientOrderCounts).sort((a, b) => b[1] - a[1])[0];
+
+    const clientsWithOrders = Object.keys(clientOrderMap).length;
+    const avgOrderValue = clientsWithOrders > 0 
+      ? totalRevenue / totalOrders 
+      : 0;
+    const avgOrdersPerClient = clientsWithOrders > 0 
+      ? totalOrders / clientsWithOrders 
+      : 0;
+
+    // Top clients by spending
+    const topClients = Object.entries(clientOrderMap)
+      .map(([clientId, data]) => {
+        const client = clients.find(c => c.id === clientId || c.phone === clientId);
+        return {
+          name: client?.name || 'عميل',
+          phone: client?.phone || clientId,
+          orders: data.count,
+          total: data.total,
+        };
+      })
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 5);
+
+    // Service popularity
+    const serviceCount = {};
+    filteredOrders.forEach(order => {
+      const service = order.service_name || 'غير محدد';
+      serviceCount[service] = (serviceCount[service] || 0) + 1;
+    });
+
+    const serviceData = Object.entries(serviceCount)
+      .map(([name, count]) => ({ name, count, value: count }))
+      .sort((a, b) => b.count - a.count);
+
+    // Daily orders trend
+    const dailyOrders = {};
+    filteredOrders.forEach(order => {
+      const date = order.created_date 
+        ? format(parseISO(order.created_date), 'MM/dd')
+        : 'غير محدد';
+      if (!dailyOrders[date]) {
+        dailyOrders[date] = { date, orders: 0, revenue: 0 };
+      }
+      dailyOrders[date].orders++;
+      dailyOrders[date].revenue += order.total || 0;
+    });
+
+    const trendData = Object.values(dailyOrders)
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(-14);
+
+    // Client areas distribution
+    const areaCount = {};
+    clients.forEach(client => {
+      const area = client.area || 'غير محدد';
+      areaCount[area] = (areaCount[area] || 0) + 1;
+    });
+
+    const areaData = Object.entries(areaCount)
+      .map(([name, count]) => ({ name, value: count }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 8);
 
     return {
       totalClients,
       newClients,
+      totalOrders,
+      completedOrders,
       totalRevenue,
       avgOrderValue,
-      completedOrders,
-      totalOrders: filteredOrders.length,
-      topClient: topClient ? { name: topClient[0], count: topClient[1] } : null,
+      avgOrdersPerClient,
+      topClients,
+      serviceData,
+      trendData,
+      areaData,
     };
-  }, [clients, getFilteredData]);
-
-  // Service distribution chart data
-  const serviceChartData = useMemo(() => {
-    const { filteredOrders } = getFilteredData;
-    const serviceCounts = {};
-    
-    filteredOrders.forEach(order => {
-      const service = order.service_name || 'أخرى';
-      serviceCounts[service] = (serviceCounts[service] || 0) + 1;
-    });
-
-    return Object.entries(serviceCounts)
-      .map(([name, count]) => ({ name, count, value: count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 8);
-  }, [getFilteredData]);
-
-  // Revenue by service
-  const revenueByService = useMemo(() => {
-    const { filteredOrders } = getFilteredData;
-    const serviceRevenue = {};
-    
-    filteredOrders.forEach(order => {
-      const service = order.service_name || 'أخرى';
-      serviceRevenue[service] = (serviceRevenue[service] || 0) + (order.total || 0);
-    });
-
-    return Object.entries(serviceRevenue)
-      .map(([name, revenue]) => ({ name, revenue }))
-      .sort((a, b) => b.revenue - a.revenue)
-      .slice(0, 6);
-  }, [getFilteredData]);
-
-  // Top clients by spending
-  const topClients = useMemo(() => {
-    const { filteredOrders } = getFilteredData;
-    const clientSpending = {};
-    const clientOrders = {};
-    
-    filteredOrders.forEach(order => {
-      const clientName = order.client_name || 'غير معروف';
-      clientSpending[clientName] = (clientSpending[clientName] || 0) + (order.total || 0);
-      clientOrders[clientName] = (clientOrders[clientName] || 0) + 1;
-    });
-
-    return Object.entries(clientSpending)
-      .map(([name, total]) => ({ 
-        name, 
-        total, 
-        orders: clientOrders[name],
-        avg: clientOrders[name] > 0 ? total / clientOrders[name] : 0
-      }))
-      .sort((a, b) => b.total - a.total)
-      .slice(0, 10);
-  }, [getFilteredData]);
-
-  // Orders trend over time
-  const ordersTrend = useMemo(() => {
-    const { filteredOrders } = getFilteredData;
-    const dailyCounts = {};
-    
-    filteredOrders.forEach(order => {
-      if (order.created_date) {
-        const date = format(parseISO(order.created_date), 'MM/dd');
-        dailyCounts[date] = (dailyCounts[date] || 0) + 1;
-      }
-    });
-
-    return Object.entries(dailyCounts)
-      .map(([date, count]) => ({ date, طلبات: count }))
-      .slice(-14); // Last 14 data points
-  }, [getFilteredData]);
-
-  const handleRefresh = () => {
-    refetchClients();
-    refetchOrders();
-  };
+  }, [filteredData, clients]);
 
   if (isLoading) {
     return (
@@ -213,10 +207,6 @@ export default function ClientReports() {
           </h1>
           <p className="text-gray-500">تحليل شامل لبيانات العملاء والطلبات</p>
         </div>
-        <Button onClick={handleRefresh} variant="outline" className="gap-2">
-          <RefreshCw className="h-4 w-4" />
-          تحديث
-        </Button>
       </div>
 
       {/* Filters */}
@@ -224,25 +214,27 @@ export default function ClientReports() {
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
             <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-gray-500" />
-              <span className="font-medium text-gray-700">الفلاتر:</span>
+              <Filter className="h-4 w-4 text-gray-500" />
+              <span className="text-sm font-medium text-gray-700">تصفية:</span>
             </div>
             <div className="flex flex-wrap gap-4">
               <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-gray-500" />
+                <Calendar className="h-4 w-4 text-purple-600" />
                 <Select value={dateRange} onValueChange={setDateRange}>
                   <SelectTrigger className="w-40">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {dateRanges.map(range => (
-                      <SelectItem key={range.value} value={range.value}>{range.label}</SelectItem>
+                    {timeRanges.map(range => (
+                      <SelectItem key={range.value} value={range.value}>
+                        {range.label}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="flex items-center gap-2">
-                <ShoppingBag className="h-4 w-4 text-gray-500" />
+                <ShoppingBag className="h-4 w-4 text-purple-600" />
                 <Select value={serviceFilter} onValueChange={setServiceFilter}>
                   <SelectTrigger className="w-44">
                     <SelectValue />
@@ -277,9 +269,8 @@ export default function ClientReports() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-100 text-sm">عملاء جدد</p>
+                <p className="text-green-100 text-sm">العملاء الجدد</p>
                 <p className="text-3xl font-bold">{stats.newClients}</p>
-                <p className="text-xs text-green-200">{dateRanges.find(r => r.value === dateRange)?.label}</p>
               </div>
               <UserPlus className="h-10 w-10 text-green-200" />
             </div>
@@ -290,9 +281,9 @@ export default function ClientReports() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-100 text-sm">إجمالي الإيرادات</p>
-                <p className="text-3xl font-bold">{stats.totalRevenue.toLocaleString()}</p>
-                <p className="text-xs text-blue-200">درهم</p>
+                <p className="text-blue-100 text-sm">متوسط قيمة الطلب</p>
+                <p className="text-3xl font-bold">{stats.avgOrderValue.toFixed(0)}</p>
+                <p className="text-blue-200 text-xs">درهم</p>
               </div>
               <DollarSign className="h-10 w-10 text-blue-200" />
             </div>
@@ -303,9 +294,9 @@ export default function ClientReports() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-orange-100 text-sm">متوسط قيمة الطلب</p>
-                <p className="text-3xl font-bold">{Math.round(stats.avgOrderValue)}</p>
-                <p className="text-xs text-orange-200">درهم</p>
+                <p className="text-orange-100 text-sm">الإيرادات</p>
+                <p className="text-3xl font-bold">{stats.totalRevenue.toLocaleString()}</p>
+                <p className="text-orange-200 text-xs">درهم</p>
               </div>
               <TrendingUp className="h-10 w-10 text-orange-200" />
             </div>
@@ -315,67 +306,69 @@ export default function ClientReports() {
 
       {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Service Distribution */}
+        {/* Service Popularity */}
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-purple-600" />
-              توزيع الخدمات
+              الخدمات الأكثر طلباً
             </CardTitle>
+            <CardDescription>توزيع الطلبات حسب نوع الخدمة</CardDescription>
           </CardHeader>
           <CardContent>
-            {serviceChartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
+            {stats.serviceData.length === 0 ? (
+              <div className="h-64 flex items-center justify-center text-gray-500">
+                لا توجد بيانات
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={stats.serviceData.slice(0, 6)} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" />
+                  <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 12 }} />
+                  <Tooltip />
+                  <Bar dataKey="count" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Client Distribution by Area */}
+        <Card className="border-0 shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Users className="h-5 w-5 text-purple-600" />
+              توزيع العملاء حسب المنطقة
+            </CardTitle>
+            <CardDescription>المناطق الأكثر تعاملاً</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {stats.areaData.length === 0 ? (
+              <div className="h-64 flex items-center justify-center text-gray-500">
+                لا توجد بيانات
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={280}>
                 <PieChart>
                   <Pie
-                    data={serviceChartData}
+                    data={stats.areaData}
                     cx="50%"
                     cy="50%"
                     innerRadius={60}
                     outerRadius={100}
                     paddingAngle={2}
                     dataKey="value"
-                    label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                     labelLine={false}
                   >
-                    {serviceChartData.map((entry, index) => (
+                    {stats.areaData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [`${value} طلب`, 'العدد']} />
+                  <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
-            ) : (
-              <div className="h-64 flex items-center justify-center text-gray-500">
-                لا توجد بيانات للعرض
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Revenue by Service */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-green-600" />
-              الإيرادات حسب الخدمة
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {revenueByService.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={revenueByService} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 12 }} />
-                  <Tooltip formatter={(value) => [`${value.toLocaleString()} درهم`, 'الإيرادات']} />
-                  <Bar dataKey="revenue" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-64 flex items-center justify-center text-gray-500">
-                لا توجد بيانات للعرض
-              </div>
             )}
           </CardContent>
         </Card>
@@ -385,106 +378,117 @@ export default function ClientReports() {
       <Card className="border-0 shadow-lg">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-blue-600" />
-            اتجاه الطلبات
+            <TrendingUp className="h-5 w-5 text-purple-600" />
+            اتجاه الطلبات والإيرادات
           </CardTitle>
+          <CardDescription>تطور الطلبات خلال الفترة المحددة</CardDescription>
         </CardHeader>
         <CardContent>
-          {ordersTrend.length > 0 ? (
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={ordersTrend}>
+          {stats.trendData.length === 0 ? (
+            <div className="h-64 flex items-center justify-center text-gray-500">
+              لا توجد بيانات
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={stats.trendData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
-                <YAxis />
+                <YAxis yAxisId="left" />
+                <YAxis yAxisId="right" orientation="right" />
                 <Tooltip />
-                <Line type="monotone" dataKey="طلبات" stroke="#8b5cf6" strokeWidth={2} dot={{ fill: '#8b5cf6' }} />
+                <Legend />
+                <Line 
+                  yAxisId="left"
+                  type="monotone" 
+                  dataKey="orders" 
+                  stroke="#8b5cf6" 
+                  strokeWidth={2}
+                  name="عدد الطلبات"
+                  dot={{ fill: '#8b5cf6' }}
+                />
+                <Line 
+                  yAxisId="right"
+                  type="monotone" 
+                  dataKey="revenue" 
+                  stroke="#10b981" 
+                  strokeWidth={2}
+                  name="الإيرادات (درهم)"
+                  dot={{ fill: '#10b981' }}
+                />
               </LineChart>
             </ResponsiveContainer>
-          ) : (
-            <div className="h-48 flex items-center justify-center text-gray-500">
-              لا توجد بيانات للعرض
-            </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Top Clients Table */}
+      {/* Top Clients */}
       <Card className="border-0 shadow-lg">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <Users className="h-5 w-5 text-purple-600" />
+            <Star className="h-5 w-5 text-yellow-500" />
             أفضل العملاء
           </CardTitle>
+          <CardDescription>العملاء الأكثر إنفاقاً خلال الفترة المحددة</CardDescription>
         </CardHeader>
         <CardContent>
-          {topClients.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-500">#</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-500">العميل</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-500">عدد الطلبات</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-500">إجمالي الإنفاق</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-500">متوسط الطلب</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {topClients.map((client, index) => (
-                    <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-3 px-4">
-                        <Badge className={
-                          index === 0 ? 'bg-yellow-100 text-yellow-700' :
-                          index === 1 ? 'bg-gray-100 text-gray-700' :
-                          index === 2 ? 'bg-orange-100 text-orange-700' :
-                          'bg-purple-100 text-purple-700'
-                        }>
-                          {index + 1}
-                        </Badge>
-                      </td>
-                      <td className="py-3 px-4 font-medium text-gray-800">{client.name}</td>
-                      <td className="py-3 px-4 text-gray-600">{client.orders}</td>
-                      <td className="py-3 px-4 text-purple-600 font-bold">{client.total.toLocaleString()} درهم</td>
-                      <td className="py-3 px-4 text-gray-600">{Math.round(client.avg).toLocaleString()} درهم</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          {stats.topClients.length === 0 ? (
+            <div className="py-8 text-center text-gray-500">
+              لا توجد بيانات
             </div>
           ) : (
-            <div className="py-12 text-center text-gray-500">
-              لا توجد بيانات للعرض
+            <div className="space-y-4">
+              {stats.topClients.map((client, index) => (
+                <div 
+                  key={index}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-purple-50 transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${
+                      index === 0 ? 'bg-yellow-500' : 
+                      index === 1 ? 'bg-gray-400' : 
+                      index === 2 ? 'bg-orange-400' : 'bg-purple-400'
+                    }`}>
+                      {index + 1}
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-800">{client.name}</p>
+                      <p className="text-sm text-gray-500" dir="ltr">{client.phone}</p>
+                    </div>
+                  </div>
+                  <div className="text-left">
+                    <p className="font-bold text-purple-600">{client.total.toLocaleString()} درهم</p>
+                    <p className="text-sm text-gray-500">{client.orders} طلبات</p>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Summary Card */}
+      {/* Summary Stats */}
       <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100">
-        <CardContent className="p-6">
-          <h3 className="font-bold text-lg text-purple-800 mb-4">ملخص التقرير</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div className="bg-white p-4 rounded-xl">
-              <p className="text-gray-500">الفترة</p>
-              <p className="font-bold text-gray-800">{dateRanges.find(r => r.value === dateRange)?.label}</p>
+        <CardHeader>
+          <CardTitle className="text-lg text-purple-800">ملخص التقرير</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white p-4 rounded-xl text-center">
+              <p className="text-2xl font-bold text-purple-600">{stats.totalOrders}</p>
+              <p className="text-sm text-gray-600">إجمالي الطلبات</p>
             </div>
-            <div className="bg-white p-4 rounded-xl">
-              <p className="text-gray-500">الطلبات المكتملة</p>
-              <p className="font-bold text-green-600">{stats.completedOrders} من {stats.totalOrders}</p>
+            <div className="bg-white p-4 rounded-xl text-center">
+              <p className="text-2xl font-bold text-green-600">{stats.completedOrders}</p>
+              <p className="text-sm text-gray-600">طلبات مكتملة</p>
             </div>
-            <div className="bg-white p-4 rounded-xl">
-              <p className="text-gray-500">نسبة الإكمال</p>
-              <p className="font-bold text-purple-600">
-                {stats.totalOrders > 0 ? Math.round((stats.completedOrders / stats.totalOrders) * 100) : 0}%
-              </p>
+            <div className="bg-white p-4 rounded-xl text-center">
+              <p className="text-2xl font-bold text-blue-600">{stats.avgOrdersPerClient.toFixed(1)}</p>
+              <p className="text-sm text-gray-600">متوسط طلبات/عميل</p>
             </div>
-            {stats.topClient && (
-              <div className="bg-white p-4 rounded-xl">
-                <p className="text-gray-500">أفضل عميل</p>
-                <p className="font-bold text-gray-800">{stats.topClient.name}</p>
-                <p className="text-xs text-gray-500">{stats.topClient.count} طلب</p>
-              </div>
-            )}
+            <div className="bg-white p-4 rounded-xl text-center">
+              <p className="text-2xl font-bold text-orange-600">{stats.serviceData.length}</p>
+              <p className="text-sm text-gray-600">أنواع خدمات</p>
+            </div>
           </div>
         </CardContent>
       </Card>

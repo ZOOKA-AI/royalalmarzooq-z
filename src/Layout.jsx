@@ -11,8 +11,7 @@ import {
   Menu,
   X,
   LogOut,
-  Sparkles,
-  FileText
+  Sparkles
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { base44 } from '@/api/base44Client';
@@ -23,7 +22,7 @@ const navItems = [
   { name: 'العملاء', page: 'Clients', icon: Users },
   { name: 'العمال', page: 'Workers', icon: UserCog },
   { name: 'الخدمات', page: 'Services', icon: Wrench },
-  { name: 'التقارير', page: 'ClientReports', icon: FileText },
+  { name: 'تقارير العملاء', page: 'ClientReports', icon: ClipboardList },
   { name: 'الإعدادات', page: 'Settings', icon: Settings },
 ];
 
