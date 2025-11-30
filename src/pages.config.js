@@ -1,5 +1,4 @@
 import Dashboard from './pages/Dashboard';
-import Clients from './pages/Clients';
 import Workers from './pages/Workers';
 import Services from './pages/Services';
 import Orders from './pages/Orders';
@@ -12,7 +11,6 @@ import __Layout from './Layout.jsx';
 
 export const PAGES = {
     "Dashboard": Dashboard,
-    "Clients": Clients,
     "Workers": Workers,
     "Services": Services,
     "Orders": Orders,
