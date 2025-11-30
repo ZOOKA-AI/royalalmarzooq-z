@@ -2,11 +2,9 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Eye, ArrowLeft } from 'lucide-react';
+import { Eye, ArrowLeft, Plus, ClipboardList } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../../utils';
-import { format } from 'date-fns';
-import { ar } from 'date-fns/locale';
 
 const statusColors = {
   'جديد': 'bg-blue-100 text-blue-700',
@@ -31,7 +29,16 @@ export default function RecentOrders({ orders = [] }) {
       <CardContent>
         <div className="space-y-4">
           {orders.length === 0 ? (
-            <p className="text-center text-gray-500 py-8">لا توجد طلبات</p>
+            <div className="text-center py-8">
+              <ClipboardList className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+              <p className="text-gray-500 mb-4">لا توجد طلبات بعد</p>
+              <Link to={createPageUrl('Orders')}>
+                <Button className="bg-purple-600 hover:bg-purple-700">
+                  <Plus className="h-4 w-4 ml-2" />
+                  إضافة أول طلب
+                </Button>
+              </Link>
+            </div>
           ) : (
             orders.slice(0, 5).map((order) => (
               <div 
@@ -45,15 +52,15 @@ export default function RecentOrders({ orders = [] }) {
                     </span>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800">{order.client_name}</p>
-                    <p className="text-sm text-gray-500">{order.service_name}</p>
+                    <p className="font-semibold text-gray-800">{order.client_name || 'عميل'}</p>
+                    <p className="text-sm text-gray-500">{order.service_name || 'خدمة'}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Badge className={statusColors[order.status] || 'bg-gray-100'}>
-                    {order.status}
+                    {order.status || 'جديد'}
                   </Badge>
-                  <span className="font-bold text-purple-600">{order.total} درهم</span>
+                  <span className="font-bold text-purple-600">{order.total || 0} درهم</span>
                   <Link to={createPageUrl(`Orders?id=${order.id}`)}>
                     <Button variant="ghost" size="icon" className="h-8 w-8">
                       <Eye className="h-4 w-4" />

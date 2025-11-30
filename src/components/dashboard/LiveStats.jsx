@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   DollarSign, Clock, CheckCircle, AlertCircle, Users, UserCog, 
-  TrendingUp, TrendingDown, Activity
+  TrendingUp, Activity, Plus
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '../../utils';
+import { Button } from "@/components/ui/button";
 
-const StatCard = ({ title, value, icon: Icon, color, trend, trendValue, animate }) => {
+const StatCard = ({ title, value, icon: Icon, color, isEmpty }) => {
   const colorClasses = {
     purple: 'from-purple-500 to-purple-600',
     blue: 'from-blue-500 to-blue-600',
     green: 'from-green-500 to-green-600',
     orange: 'from-orange-500 to-orange-600',
-    red: 'from-red-500 to-red-600',
     cyan: 'from-cyan-500 to-cyan-600',
   };
 
@@ -28,20 +30,9 @@ const StatCard = ({ title, value, icon: Icon, color, trend, trendValue, animate 
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-gray-500 mb-1">{title}</p>
-              <motion.h3 
-                key={value}
-                initial={animate ? { scale: 1.2, color: '#8b5cf6' } : {}}
-                animate={{ scale: 1, color: '#1f2937' }}
-                className="text-2xl font-bold text-gray-800"
-              >
+              <h3 className={`text-2xl font-bold ${isEmpty ? 'text-gray-400' : 'text-gray-800'}`}>
                 {value}
-              </motion.h3>
-              {trend && (
-                <div className={`flex items-center gap-1 mt-2 text-sm ${trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
-                  {trend === 'up' ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-                  <span>{trendValue}</span>
-                </div>
-              )}
+              </h3>
             </div>
             <div className={`p-3 rounded-xl bg-gradient-to-br ${colorClasses[color]} shadow-lg`}>
               <Icon className="h-5 w-5 text-white" />
@@ -54,124 +45,125 @@ const StatCard = ({ title, value, icon: Icon, color, trend, trendValue, animate 
 };
 
 export default function LiveStats({ orders = [], clients = [], workers = [] }) {
-  const [stats, setStats] = useState({});
-  const [prevStats, setPrevStats] = useState({});
-  const [animate, setAnimate] = useState({});
+  // حساب الإحصائيات من البيانات الحقيقية فقط
+  const completedOrders = orders.filter(o => o.status === 'مكتمل');
+  const newOrders = orders.filter(o => o.status === 'جديد');
+  const inProgressOrders = orders.filter(o => o.status === 'قيد التنفيذ');
+  const totalRevenue = completedOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+  const availableWorkers = workers.filter(w => w.status === 'متاح').length;
+  
+  // إحصائيات الشهر الحالي
+  const today = new Date();
+  const thisMonthOrders = orders.filter(o => {
+    const d = new Date(o.created_date);
+    return d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
+  });
+  const thisMonthRevenue = thisMonthOrders
+    .filter(o => o.status === 'مكتمل')
+    .reduce((sum, o) => sum + (o.total || 0), 0);
 
-  useEffect(() => {
-    // حساب من البيانات الحقيقية فقط
-    const completedOrders = orders.filter(o => o.status === 'مكتمل');
-    const newOrders = orders.filter(o => o.status === 'جديد');
-    const inProgressOrders = orders.filter(o => o.status === 'قيد التنفيذ');
-    const totalRevenue = completedOrders.reduce((sum, o) => sum + (o.total || 0), 0);
-    const availableWorkers = workers.filter(w => w.status === 'متاح').length;
-    
-    const today = new Date();
-    const thisMonthOrders = orders.filter(o => {
-      if (!o.created_date) return false;
-      const d = new Date(o.created_date);
-      return d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
-    });
-    const thisMonthRevenue = thisMonthOrders
-      .filter(o => o.status === 'مكتمل')
-      .reduce((sum, o) => sum + (o.total || 0), 0);
-
-    const newStats = {
-      totalRevenue,
-      thisMonthRevenue,
-      newOrders: newOrders.length,
-      inProgress: inProgressOrders.length,
-      completed: completedOrders.length,
-      clients: clients.length,
-      workers: workers.length,
-      availableWorkers,
-      thisMonthOrders: thisMonthOrders.length,
-    };
-
-    const changes = {};
-    Object.keys(newStats).forEach(key => {
-      if (prevStats[key] !== undefined && prevStats[key] !== newStats[key]) {
-        changes[key] = true;
-      }
-    });
-
-    setPrevStats(stats);
-    setStats(newStats);
-    setAnimate(changes);
-    setTimeout(() => setAnimate({}), 1000);
-  }, [orders, clients, workers]);
+  const hasData = orders.length > 0 || clients.length > 0 || workers.length > 0;
 
   return (
     <div className="space-y-6">
-      {/* Live indicator */}
-      <div className="flex items-center gap-2 text-sm text-gray-500">
-        <Activity className="h-4 w-4 text-green-500 animate-pulse" />
-        <span>البيانات تتحدث تلقائياً</span>
+      {/* مؤشر البيانات الحية */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm text-gray-500">
+          <Activity className="h-4 w-4 text-green-500 animate-pulse" />
+          <span>بيانات حقيقية من قاعدة البيانات</span>
+        </div>
+        {!hasData && (
+          <div className="flex gap-2">
+            <Link to={createPageUrl('Orders')}>
+              <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+                <Plus className="h-4 w-4 ml-1" />
+                إضافة طلب
+              </Button>
+            </Link>
+            <Link to={createPageUrl('Clients')}>
+              <Button size="sm" variant="outline">
+                <Plus className="h-4 w-4 ml-1" />
+                إضافة عميل
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
 
-      {/* Main Stats */}
+      {/* الإحصائيات الرئيسية */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard 
           title="إجمالي الإيرادات"
-          value={`${stats.totalRevenue?.toLocaleString() || 0} درهم`}
+          value={totalRevenue > 0 ? `${totalRevenue.toLocaleString()} درهم` : '0 درهم'}
           icon={DollarSign}
           color="green"
-          animate={animate.totalRevenue}
+          isEmpty={totalRevenue === 0}
         />
         <StatCard 
           title="إيرادات الشهر"
-          value={`${stats.thisMonthRevenue?.toLocaleString() || 0} درهم`}
+          value={thisMonthRevenue > 0 ? `${thisMonthRevenue.toLocaleString()} درهم` : '0 درهم'}
           icon={TrendingUp}
           color="cyan"
-          animate={animate.thisMonthRevenue}
+          isEmpty={thisMonthRevenue === 0}
         />
         <StatCard 
           title="طلبات جديدة"
-          value={stats.newOrders || 0}
+          value={newOrders.length}
           icon={AlertCircle}
           color="blue"
-          animate={animate.newOrders}
+          isEmpty={newOrders.length === 0}
         />
         <StatCard 
           title="قيد التنفيذ"
-          value={stats.inProgress || 0}
+          value={inProgressOrders.length}
           icon={Clock}
           color="orange"
-          animate={animate.inProgress}
+          isEmpty={inProgressOrders.length === 0}
         />
       </div>
 
-      {/* Secondary Stats */}
+      {/* الإحصائيات الثانوية */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard 
           title="مكتملة"
-          value={stats.completed || 0}
+          value={completedOrders.length}
           icon={CheckCircle}
           color="green"
-          animate={animate.completed}
+          isEmpty={completedOrders.length === 0}
         />
         <StatCard 
           title="طلبات الشهر"
-          value={stats.thisMonthOrders || 0}
+          value={thisMonthOrders.length}
           icon={Activity}
           color="purple"
-          animate={animate.thisMonthOrders}
+          isEmpty={thisMonthOrders.length === 0}
         />
         <StatCard 
           title="العملاء"
-          value={stats.clients || 0}
+          value={clients.length}
           icon={Users}
           color="purple"
-          animate={animate.clients}
+          isEmpty={clients.length === 0}
         />
         <StatCard 
-          title="عمال متاحين"
-          value={`${stats.availableWorkers || 0}/${stats.workers || 0}`}
+          title="العمال"
+          value={workers.length > 0 ? `${availableWorkers}/${workers.length}` : '0'}
           icon={UserCog}
           color="blue"
-          animate={animate.availableWorkers}
+          isEmpty={workers.length === 0}
         />
       </div>
+
+      {/* رسالة للمستخدم إذا لم توجد بيانات */}
+      {!hasData && (
+        <div className="bg-purple-50 border border-purple-200 rounded-xl p-6 text-center">
+          <Activity className="h-12 w-12 mx-auto text-purple-400 mb-3" />
+          <h3 className="text-lg font-bold text-purple-700 mb-2">النظام جاهز للعمل</h3>
+          <p className="text-purple-600 text-sm">
+            ابدأ بإضافة طلبات وعملاء وعمال لرؤية الإحصائيات الحقيقية
+          </p>
+        </div>
+      )}
     </div>
   );
 }
