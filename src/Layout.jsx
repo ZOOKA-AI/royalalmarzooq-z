@@ -13,10 +13,12 @@ import {
   LogOut,
   Sparkles,
   FileText,
-  Wand2
+  Wand2,
+  Bot
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { base44 } from '@/api/base44Client';
+import AIAssistantChat from './components/dashboard/AIAssistantChat';
 
 const navItems = [
   { name: 'الرئيسية', page: 'Dashboard', icon: LayoutDashboard },
@@ -135,6 +137,18 @@ export default function Layout({ children, currentPageName }) {
           {children}
         </div>
       </main>
+
+      {/* AI Assistant - يظهر في جميع الصفحات */}
+      <AIAssistantChat />
+
+      {/* CSS Animation for bounce */}
+      <style>{`
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+          40% { transform: translateY(-10px); }
+          60% { transform: translateY(-5px); }
+        }
+      `}</style>
     </div>
   );
 }
