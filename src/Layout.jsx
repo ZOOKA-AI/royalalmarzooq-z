@@ -22,6 +22,7 @@ const navItems = [
   { name: 'العملاء', page: 'Clients', icon: Users },
   { name: 'العمال', page: 'Workers', icon: UserCog },
   { name: 'الخدمات', page: 'Services', icon: Wrench },
+  { name: 'التقارير', page: 'ClientReports', icon: ClipboardList },
   { name: 'الإعدادات', page: 'Settings', icon: Settings },
 ];
 
