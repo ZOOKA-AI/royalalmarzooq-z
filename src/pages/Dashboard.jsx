@@ -1,13 +1,16 @@
-import React, { useEffect } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Skeleton } from "@/components/ui/skeleton";
 import LiveStats from '../components/dashboard/LiveStats';
 import AIInsights from '../components/dashboard/AIInsights';
 import RecentOrders from '../components/dashboard/RecentOrders';
 import ServiceChart from '../components/dashboard/ServiceChart';
+import RevenueChart from '../components/dashboard/RevenueChart';
+import TopServices from '../components/dashboard/TopServices';
+import WorkerStatus from '../components/dashboard/WorkerStatus';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, RefreshCw } from 'lucide-react';
+import { Activity } from 'lucide-react';
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
@@ -79,6 +82,12 @@ export default function Dashboard() {
       {/* Live Stats */}
       <LiveStats orders={orders} clients={clients} workers={workers} />
 
+      {/* Revenue & Top Services */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RevenueChart orders={orders} />
+        <TopServices orders={orders} />
+      </div>
+
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* AI Insights */}
@@ -100,29 +109,28 @@ export default function Dashboard() {
           <RecentOrders orders={orders} />
         </div>
 
-        {/* Status Summary */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-lg font-bold text-gray-800">ملخص الحالات</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {statusSummary.map(item => (
-              <div key={item.label} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                <div className="flex items-center gap-3">
-                  <div className={`w-3 h-3 rounded-full ${item.color}`} />
-                  <span className="text-gray-600">{item.label}</span>
+        {/* Workers & Status */}
+        <div className="space-y-6">
+          <WorkerStatus workers={workers} />
+          
+          {/* Status Summary */}
+          <Card className="border-0 shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-lg font-bold text-gray-800">ملخص الحالات</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {statusSummary.map(item => (
+                <div key={item.label} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${item.color}`} />
+                    <span className="text-sm text-gray-600">{item.label}</span>
+                  </div>
+                  <span className="font-bold text-gray-800">{item.count}</span>
                 </div>
-                <span className="font-bold text-gray-800 text-lg">{item.count}</span>
-              </div>
-            ))}
-            <div className="pt-4 border-t">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">إجمالي الطلبات</span>
-                <span className="font-bold text-purple-600 text-xl">{orders.length}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

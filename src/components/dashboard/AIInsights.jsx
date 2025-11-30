@@ -96,23 +96,17 @@ ${dataSummary}
   };
 
   useEffect(() => {
-    if (orders.length > 0 || clients.length > 0) {
-      generateInsights();
-    } else {
-      setLoading(false);
-    }
+    generateInsights();
   }, [orders.length, clients.length, workers.length]);
 
   // Auto-refresh every 5 minutes
   useEffect(() => {
     const interval = setInterval(() => {
-      if (orders.length > 0) {
-        generateInsights();
-      }
+      generateInsights();
     }, 5 * 60 * 1000);
     
     return () => clearInterval(interval);
-  }, [orders.length]);
+  }, []);
 
   if (loading) {
     return (
