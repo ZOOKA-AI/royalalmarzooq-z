@@ -16,7 +16,7 @@ const statusColors = {
   'ملغي': 'bg-red-100 text-red-700',
 };
 
-export default function RecentOrders({ orders }) {
+export default function RecentOrders({ orders = [] }) {
   return (
     <Card className="border-0 shadow-lg">
       <CardHeader className="flex flex-row items-center justify-between pb-2">

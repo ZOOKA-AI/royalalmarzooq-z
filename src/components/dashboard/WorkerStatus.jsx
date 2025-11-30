@@ -10,7 +10,7 @@ const statusColors = {
   'غير نشط': 'bg-gray-100 text-gray-700',
 };
 
-export default function WorkerStatus({ workers }) {
+export default function WorkerStatus({ workers = [] }) {
   if (workers.length === 0) {
     return (
       <Card className="border-0 shadow-lg">

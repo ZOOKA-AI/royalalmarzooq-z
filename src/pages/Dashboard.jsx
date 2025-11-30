@@ -43,14 +43,14 @@ export default function Dashboard() {
 
   const isLoading = ordersLoading || clientsLoading || workersLoading || servicesLoading;
 
-  // Status summary for quick view
+  // Status summary from real data only
   const statusSummary = [
     { label: 'جديد', count: orders.filter(o => o.status === 'جديد').length, color: 'bg-blue-500' },
     { label: 'مؤكد', count: orders.filter(o => o.status === 'مؤكد').length, color: 'bg-purple-500' },
     { label: 'قيد التنفيذ', count: orders.filter(o => o.status === 'قيد التنفيذ').length, color: 'bg-orange-500' },
     { label: 'مكتمل', count: orders.filter(o => o.status === 'مكتمل').length, color: 'bg-green-500' },
     { label: 'ملغي', count: orders.filter(o => o.status === 'ملغي').length, color: 'bg-red-500' },
-  ];
+  ].filter(s => s.count > 0 || orders.length === 0);
 
   if (isLoading) {
     return (
