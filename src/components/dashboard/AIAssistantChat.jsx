@@ -144,22 +144,67 @@ export default function AIAssistantChat() {
   };
 
   const toggleListening = () => {
-    if (!recognitionRef.current) {
-      toast.error('المتصفح لا يدعم التعرف على الصوت');
+    // التحقق من دعم المتصفح
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      toast.error('المتصفح لا يدعم التعرف على الصوت. استخدم Chrome أو Edge');
       return;
     }
 
+    // إنشاء recognition جديد في كل مرة لتجنب مشاكل الحالة
     if (isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    } else {
-      try {
-        recognitionRef.current.start();
-        setIsListening(true);
-        toast.info('🎤 جاري الاستماع... تحدث الآن');
-      } catch (e) {
-        toast.error('يرجى المحاولة مرة أخرى');
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
       }
+      setIsListening(false);
+      return;
+    }
+
+    try {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'ar-AE';
+      
+      recognition.onstart = () => {
+        setIsListening(true);
+        toast.success('🎤 جاري الاستماع... تحدث الآن');
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(transcript);
+        setIsListening(false);
+        toast.success(`سمعت: "${transcript}"`);
+        // إرسال تلقائي
+        setTimeout(() => {
+          sendMessage(transcript);
+        }, 300);
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech error:', event.error);
+        setIsListening(false);
+        if (event.error === 'no-speech') {
+          toast.warning('لم أسمع شيئاً. حاول مرة أخرى');
+        } else if (event.error === 'not-allowed') {
+          toast.error('يرجى السماح بالوصول للميكروفون من إعدادات المتصفح');
+        } else {
+          toast.error('حدث خطأ. حاول مرة أخرى');
+        }
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+      
+    } catch (e) {
+      console.error('Recognition error:', e);
+      setIsListening(false);
+      toast.error('فشل تشغيل الميكروفون. تأكد من السماح بالوصول');
     }
   };
 
@@ -338,17 +383,21 @@ export default function AIAssistantChat() {
 
   if (!isOpen) {
     return (
-      <Button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 left-6 z-50 h-16 w-16 rounded-full bg-gradient-to-r from-purple-600 to-purple-700 shadow-lg hover:shadow-xl transition-all animate-pulse hover:animate-none"
-      >
-        <Bot className="h-7 w-7" />
-      </Button>
+      <div className="fixed bottom-6 left-6 z-[9999]">
+        <Button
+          onClick={() => setIsOpen(true)}
+          className="h-16 w-16 rounded-full bg-gradient-to-r from-purple-600 to-purple-700 shadow-2xl hover:shadow-xl transition-all hover:scale-110 border-4 border-white"
+          style={{ animation: 'bounce 2s infinite' }}
+        >
+          <Bot className="h-8 w-8 text-white" />
+        </Button>
+        <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white animate-pulse"></span>
+      </div>
     );
   }
 
   return (
-    <div className={`fixed z-50 ${isExpanded ? 'inset-4' : 'bottom-6 left-6 w-[380px] h-[550px]'} transition-all`}>
+    <div className={`fixed z-[9999] ${isExpanded ? 'inset-4' : 'bottom-6 left-6 w-[380px] h-[550px]'} transition-all`}>
       <Card className="h-full border-0 shadow-2xl flex flex-col overflow-hidden">
         {/* Header */}
         <CardHeader className="bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 px-4">
@@ -465,17 +514,18 @@ export default function AIAssistantChat() {
         <div className="p-3 bg-white border-t">
           <div className="flex gap-2">
             <Button
-              variant="outline"
+              variant={isListening ? "destructive" : "outline"}
               size="icon"
               className={`shrink-0 transition-all ${
                 isListening 
-                  ? 'bg-red-500 text-white border-red-500 animate-pulse hover:bg-red-600' 
-                  : 'hover:bg-purple-50 hover:border-purple-300'
+                  ? 'bg-red-500 text-white border-red-500 hover:bg-red-600 animate-pulse' 
+                  : 'hover:bg-purple-100 hover:border-purple-400 hover:text-purple-600'
               }`}
               onClick={toggleListening}
               disabled={isLoading}
+              type="button"
             >
-              {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+              {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
             </Button>
             <Input
               ref={inputRef}
