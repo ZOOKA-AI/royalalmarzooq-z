@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { 
-  Plus, Search, Edit, Trash2, Clock, DollarSign
+  Plus, Search, Edit, Trash2, Clock, DollarSign, Tag
 } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -40,11 +40,11 @@ import { toast } from "sonner";
 const categories = ['تنظيف منازل', 'تنظيف مكاتب', 'تنظيف سجاد', 'تنظيف واجهات', 'تنظيف خزانات', 'مكافحة حشرات', 'أخرى'];
 
 const categoryColors = {
-  'تنظيف منازل': 'bg-blue-100 text-blue-700',
-  'تنظيف مكاتب': 'bg-purple-100 text-purple-700',
-  'تنظيف سجاد': 'bg-orange-100 text-orange-700',
-  'تنظيف واجهات': 'bg-cyan-100 text-cyan-700',
-  'تنظيف خزانات': 'bg-teal-100 text-teal-700',
+  'تنظيف منازل': 'bg-purple-100 text-purple-700',
+  'تنظيف مكاتب': 'bg-blue-100 text-blue-700',
+  'تنظيف سجاد': 'bg-green-100 text-green-700',
+  'تنظيف واجهات': 'bg-orange-100 text-orange-700',
+  'تنظيف خزانات': 'bg-cyan-100 text-cyan-700',
   'مكافحة حشرات': 'bg-red-100 text-red-700',
   'أخرى': 'bg-gray-100 text-gray-700',
 };
@@ -93,9 +93,7 @@ export default function Services() {
   });
 
   const resetForm = () => {
-    setFormData({
-      name: '', description: '', price: '', duration: '', category: '', is_active: true
-    });
+    setFormData({ name: '', description: '', price: '', duration: '', category: '', is_active: true });
     setEditingService(null);
     setShowForm(false);
   };
@@ -149,7 +147,7 @@ export default function Services() {
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">الخدمات</h1>
-          <p className="text-gray-500">إدارة الخدمات والأسعار</p>
+          <p className="text-gray-500">إدارة الخدمات المتاحة</p>
         </div>
         <Button 
           onClick={() => setShowForm(true)}
@@ -179,37 +177,33 @@ export default function Services() {
           </div>
         ) : (
           filteredServices.map(service => (
-            <Card 
-              key={service.id} 
-              className={`border-0 shadow-lg hover:shadow-xl transition-shadow ${!service.is_active && 'opacity-60'}`}
-            >
+            <Card key={service.id} className={`border-0 shadow-lg hover:shadow-xl transition-shadow ${!service.is_active && 'opacity-60'}`}>
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h3 className="font-bold text-lg text-gray-800">{service.name}</h3>
-                    <Badge className={categoryColors[service.category] || categoryColors['أخرى']}>
-                      {service.category || 'أخرى'}
+                    <Badge className={categoryColors[service.category] || 'bg-gray-100'}>
+                      <Tag className="h-3 w-3 ml-1" />
+                      {service.category}
                     </Badge>
                   </div>
                   {!service.is_active && (
-                    <Badge variant="secondary">غير نشط</Badge>
+                    <Badge variant="outline" className="text-gray-500">غير نشط</Badge>
                   )}
                 </div>
-                
-                {service.description && (
-                  <p className="text-sm text-gray-500 mb-4 line-clamp-2">
-                    {service.description}
-                  </p>
-                )}
 
-                <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                  <div className="flex items-center gap-1">
-                    <DollarSign className="h-4 w-4 text-green-500" />
-                    <span className="font-bold text-lg text-gray-800">{service.price} ر.س</span>
+                {service.description && (
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">{service.description}</p>
+                )}
+                
+                <div className="flex items-center justify-between text-sm mb-4">
+                  <div className="flex items-center gap-1 text-gray-600">
+                    <DollarSign className="h-4 w-4" />
+                    <span className="font-bold text-purple-600 text-lg">{service.price} ر.س</span>
                   </div>
                   {service.duration && (
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-4 w-4 text-blue-500" />
+                    <div className="flex items-center gap-1 text-gray-600">
+                      <Clock className="h-4 w-4" />
                       <span>{service.duration} ساعة</span>
                     </div>
                   )}
@@ -249,6 +243,7 @@ export default function Services() {
               <Textarea
                 value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
+                rows={3}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -262,7 +257,7 @@ export default function Services() {
                 />
               </div>
               <div>
-                <Label>المدة (بالساعات)</Label>
+                <Label>المدة (ساعات)</Label>
                 <Input
                   type="number"
                   value={formData.duration}

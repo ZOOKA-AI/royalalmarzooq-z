@@ -2,50 +2,45 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { 
-  User, Bell, MessageSquare, Shield, Building
+  Settings as SettingsIcon, User, Building, Phone, Mail, MessageCircle
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 export default function Settings() {
-  const [userData, setUserData] = useState({
-    full_name: '',
-    email: '',
-    company_name: '',
-    company_phone: '',
-    company_address: '',
-  });
-
-  const { data: user } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
-  });
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      setUserData({
-        full_name: user.full_name || '',
-        email: user.email || '',
-        company_name: user.company_name || 'Royal Clean Services',
-        company_phone: user.company_phone || '',
-        company_address: user.company_address || '',
-      });
-    }
-  }, [user]);
+    loadUserData();
+  }, []);
 
-  const handleSaveProfile = async () => {
-    await base44.auth.updateMe({
-      company_name: userData.company_name,
-      company_phone: userData.company_phone,
-      company_address: userData.company_address,
-    });
-    toast.success('تم حفظ الإعدادات بنجاح');
+  const loadUserData = async () => {
+    try {
+      const user = await base44.auth.me();
+      setUserData(user);
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleLogout = () => {
+    base44.auth.logout();
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -55,121 +50,115 @@ export default function Settings() {
         <p className="text-gray-500">إدارة إعدادات الحساب والنظام</p>
       </div>
 
-      <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="bg-white shadow-sm">
-          <TabsTrigger value="profile" className="gap-2">
-            <User className="h-4 w-4" />
+      {/* User Profile */}
+      <Card className="border-0 shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <User className="h-5 w-5 text-purple-600" />
             الملف الشخصي
-          </TabsTrigger>
-          <TabsTrigger value="company" className="gap-2">
-            <Building className="h-4 w-4" />
-            الشركة
-          </TabsTrigger>
-          <TabsTrigger value="notifications" className="gap-2">
-            <Bell className="h-4 w-4" />
-            الإشعارات
-          </TabsTrigger>
-        </TabsList>
+          </CardTitle>
+          <CardDescription>معلومات حسابك الشخصية</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-4">
+            <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center">
+              <span className="text-purple-600 font-bold text-3xl">
+                {userData?.full_name?.charAt(0) || userData?.email?.charAt(0) || 'U'}
+              </span>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-800">{userData?.full_name || 'مستخدم'}</h3>
+              <p className="text-gray-500">{userData?.email}</p>
+              <p className="text-sm text-purple-600">{userData?.role === 'admin' ? 'مدير النظام' : 'مستخدم'}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-        <TabsContent value="profile">
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle>الملف الشخصي</CardTitle>
-              <CardDescription>معلومات حسابك الشخصي</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label>الاسم الكامل</Label>
-                  <Input
-                    value={userData.full_name}
-                    disabled
-                    className="bg-gray-50"
-                  />
-                </div>
-                <div>
-                  <Label>البريد الإلكتروني</Label>
-                  <Input
-                    value={userData.email}
-                    disabled
-                    className="bg-gray-50"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="company">
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle>معلومات الشركة</CardTitle>
-              <CardDescription>بيانات شركة الخدمات</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+      {/* Company Info */}
+      <Card className="border-0 shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Building className="h-5 w-5 text-purple-600" />
+            معلومات الشركة
+          </CardTitle>
+          <CardDescription>بيانات Royal Clean Services</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+              <Phone className="h-5 w-5 text-purple-600" />
               <div>
-                <Label>اسم الشركة</Label>
-                <Input
-                  value={userData.company_name}
-                  onChange={(e) => setUserData({...userData, company_name: e.target.value})}
-                />
+                <p className="text-sm text-gray-500">رقم الهاتف</p>
+                <p className="font-medium" dir="ltr">+966 XX XXX XXXX</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label>هاتف الشركة</Label>
-                  <Input
-                    value={userData.company_phone}
-                    onChange={(e) => setUserData({...userData, company_phone: e.target.value})}
-                    dir="ltr"
-                  />
-                </div>
-                <div>
-                  <Label>عنوان الشركة</Label>
-                  <Input
-                    value={userData.company_address}
-                    onChange={(e) => setUserData({...userData, company_address: e.target.value})}
-                  />
-                </div>
+            </div>
+            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+              <Mail className="h-5 w-5 text-purple-600" />
+              <div>
+                <p className="text-sm text-gray-500">البريد الإلكتروني</p>
+                <p className="font-medium">info@royalclean.com</p>
               </div>
-              <Button onClick={handleSaveProfile} className="bg-purple-600 hover:bg-purple-700">
-                حفظ التغييرات
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
+            </div>
+            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+              <MessageCircle className="h-5 w-5 text-green-600" />
+              <div>
+                <p className="text-sm text-gray-500">الواتساب</p>
+                <p className="font-medium" dir="ltr">+966 XX XXX XXXX</p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-        <TabsContent value="notifications">
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle>إعدادات الإشعارات</CardTitle>
-              <CardDescription>تحكم في الإشعارات التي تصلك</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">إشعارات الطلبات الجديدة</p>
-                  <p className="text-sm text-gray-500">استلم إشعار عند وصول طلب جديد</p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">تذكير المواعيد</p>
-                  <p className="text-sm text-gray-500">تذكير قبل مواعيد الخدمات</p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">تقارير أسبوعية</p>
-                  <p className="text-sm text-gray-500">استلم تقرير أسبوعي بالبريد</p>
-                </div>
-                <Switch />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      {/* WhatsApp Bot Info */}
+      <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-green-700">
+            <MessageCircle className="h-5 w-5" />
+            بوت الواتساب للرد التلقائي
+          </CardTitle>
+          <CardDescription>الرد التلقائي على استفسارات العملاء</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-gray-700">
+            البوت يمكنه الرد على العملاء تلقائياً وتقديم معلومات عن الخدمات والأسعار وحجز المواعيد.
+          </p>
+          <div className="bg-white p-4 rounded-xl">
+            <h4 className="font-bold text-gray-800 mb-2">الوظائف المتاحة:</h4>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li>✅ عرض قائمة الخدمات والأسعار</li>
+              <li>✅ الرد على استفسارات العملاء</li>
+              <li>✅ إنشاء طلبات جديدة</li>
+              <li>✅ متابعة حالة الطلبات</li>
+              <li>✅ تحديث بيانات العملاء</li>
+            </ul>
+          </div>
+          <a 
+            href={base44.agents.getWhatsAppConnectURL('royal_clean_bot')} 
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button className="w-full bg-green-600 hover:bg-green-700">
+              <MessageCircle className="h-4 w-4 ml-2" />
+              ربط الواتساب بالبوت
+            </Button>
+          </a>
+        </CardContent>
+      </Card>
+
+      {/* Logout */}
+      <Card className="border-0 shadow-lg border-red-100">
+        <CardContent className="p-6">
+          <Button 
+            variant="outline" 
+            className="w-full text-red-600 border-red-200 hover:bg-red-50"
+            onClick={handleLogout}
+          >
+            تسجيل الخروج
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
