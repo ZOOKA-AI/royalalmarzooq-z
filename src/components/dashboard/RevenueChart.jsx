@@ -5,7 +5,7 @@ import { TrendingUp } from 'lucide-react';
 import { format, subDays, startOfDay } from 'date-fns';
 import { ar } from 'date-fns/locale';
 
-export default function RevenueChart({ orders }) {
+export default function RevenueChart({ orders = [] }) {
   const chartData = useMemo(() => {
     // Get last 7 days
     const days = [];

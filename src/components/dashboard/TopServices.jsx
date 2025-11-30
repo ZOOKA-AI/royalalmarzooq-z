@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Star, TrendingUp } from 'lucide-react';
 
-export default function TopServices({ orders }) {
+export default function TopServices({ orders = [] }) {
   const topServices = useMemo(() => {
     const serviceStats = {};
     

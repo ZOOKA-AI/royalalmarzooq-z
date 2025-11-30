@@ -53,21 +53,22 @@ const StatCard = ({ title, value, icon: Icon, color, trend, trendValue, animate 
   );
 };
 
-export default function LiveStats({ orders, clients, workers }) {
+export default function LiveStats({ orders = [], clients = [], workers = [] }) {
   const [stats, setStats] = useState({});
   const [prevStats, setPrevStats] = useState({});
   const [animate, setAnimate] = useState({});
 
   useEffect(() => {
+    // حساب من البيانات الحقيقية فقط
     const completedOrders = orders.filter(o => o.status === 'مكتمل');
     const newOrders = orders.filter(o => o.status === 'جديد');
     const inProgressOrders = orders.filter(o => o.status === 'قيد التنفيذ');
     const totalRevenue = completedOrders.reduce((sum, o) => sum + (o.total || 0), 0);
     const availableWorkers = workers.filter(w => w.status === 'متاح').length;
     
-    // Calculate this month stats
     const today = new Date();
     const thisMonthOrders = orders.filter(o => {
+      if (!o.created_date) return false;
       const d = new Date(o.created_date);
       return d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
     });
@@ -87,7 +88,6 @@ export default function LiveStats({ orders, clients, workers }) {
       thisMonthOrders: thisMonthOrders.length,
     };
 
-    // Detect changes for animation
     const changes = {};
     Object.keys(newStats).forEach(key => {
       if (prevStats[key] !== undefined && prevStats[key] !== newStats[key]) {
@@ -98,8 +98,6 @@ export default function LiveStats({ orders, clients, workers }) {
     setPrevStats(stats);
     setStats(newStats);
     setAnimate(changes);
-
-    // Reset animation flags after animation
     setTimeout(() => setAnimate({}), 1000);
   }, [orders, clients, workers]);
 
