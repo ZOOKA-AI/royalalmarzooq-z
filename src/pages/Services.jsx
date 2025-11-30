@@ -37,16 +37,28 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
-const categories = ['تنظيف منازل', 'تنظيف مكاتب', 'تنظيف سجاد', 'تنظيف واجهات', 'تنظيف خزانات', 'مكافحة حشرات', 'أخرى'];
+const categories = [
+  'تنظيف كنب', 'تنظيف سجاد', 'تنظيف ستائر', 'تنظيف خزانات', 
+  'تنظيف مطابخ', 'تنظيف شقق وأقسام', 'تنظيف نجف', 'تنظيف مكيفات',
+  'تنظيف حوش', 'تنظيف حمامات', 'تسليك بواليع', 'تنظيف فلل',
+  'مكافحة حشرات', 'أسلاك طاردة للحمام'
+];
 
 const categoryColors = {
-  'تنظيف منازل': 'bg-purple-100 text-purple-700',
-  'تنظيف مكاتب': 'bg-blue-100 text-blue-700',
+  'تنظيف كنب': 'bg-purple-100 text-purple-700',
   'تنظيف سجاد': 'bg-green-100 text-green-700',
-  'تنظيف واجهات': 'bg-orange-100 text-orange-700',
+  'تنظيف ستائر': 'bg-pink-100 text-pink-700',
   'تنظيف خزانات': 'bg-cyan-100 text-cyan-700',
+  'تنظيف مطابخ': 'bg-orange-100 text-orange-700',
+  'تنظيف شقق وأقسام': 'bg-blue-100 text-blue-700',
+  'تنظيف نجف': 'bg-yellow-100 text-yellow-700',
+  'تنظيف مكيفات': 'bg-indigo-100 text-indigo-700',
+  'تنظيف حوش': 'bg-lime-100 text-lime-700',
+  'تنظيف حمامات': 'bg-teal-100 text-teal-700',
+  'تسليك بواليع': 'bg-amber-100 text-amber-700',
+  'تنظيف فلل': 'bg-violet-100 text-violet-700',
   'مكافحة حشرات': 'bg-red-100 text-red-700',
-  'أخرى': 'bg-gray-100 text-gray-700',
+  'أسلاك طاردة للحمام': 'bg-gray-100 text-gray-700',
 };
 
 export default function Services() {
@@ -199,7 +211,7 @@ export default function Services() {
                 <div className="flex items-center justify-between text-sm mb-4">
                   <div className="flex items-center gap-1 text-gray-600">
                     <DollarSign className="h-4 w-4" />
-                    <span className="font-bold text-purple-600 text-lg">{service.price} ر.س</span>
+                    <span className="font-bold text-purple-600 text-lg">{service.price} درهم</span>
                   </div>
                   {service.duration && (
                     <div className="flex items-center gap-1 text-gray-600">
@@ -248,7 +260,7 @@ export default function Services() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>السعر (ر.س) *</Label>
+                <Label>السعر (درهم) *</Label>
                 <Input
                   type="number"
                   value={formData.price}

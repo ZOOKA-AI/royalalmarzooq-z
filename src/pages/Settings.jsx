@@ -82,7 +82,7 @@ export default function Settings() {
             <Building className="h-5 w-5 text-purple-600" />
             معلومات الشركة
           </CardTitle>
-          <CardDescription>بيانات Royal Clean Services</CardDescription>
+          <CardDescription>شركة رويال للتنظيف والتعقيم ومكافحة الحشرات</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -90,23 +90,19 @@ export default function Settings() {
               <Phone className="h-5 w-5 text-purple-600" />
               <div>
                 <p className="text-sm text-gray-500">رقم الهاتف</p>
-                <p className="font-medium" dir="ltr">+966 XX XXX XXXX</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-              <Mail className="h-5 w-5 text-purple-600" />
-              <div>
-                <p className="text-sm text-gray-500">البريد الإلكتروني</p>
-                <p className="font-medium">info@royalclean.com</p>
+                <p className="font-medium" dir="ltr">+971 56 317 7803</p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
               <MessageCircle className="h-5 w-5 text-green-600" />
               <div>
                 <p className="text-sm text-gray-500">الواتساب</p>
-                <p className="font-medium" dir="ltr">+966 XX XXX XXXX</p>
+                <p className="font-medium" dir="ltr">+971 56 317 7803</p>
               </div>
             </div>
+          </div>
+          <div className="p-4 bg-purple-50 rounded-xl">
+            <p className="text-purple-700 font-medium">⏰ خدمة 24 ساعة في جميع أنحاء الإمارات</p>
           </div>
         </CardContent>
       </Card>
@@ -135,7 +131,7 @@ export default function Settings() {
             </ul>
           </div>
           <a 
-            href={base44.agents.getWhatsAppConnectURL('royal_clean_bot')} 
+            href={base44.agents.getWhatsAppConnectURL('royal_clean_assistant')} 
             target="_blank"
             rel="noopener noreferrer"
           >
