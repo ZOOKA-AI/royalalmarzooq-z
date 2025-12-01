@@ -22,6 +22,7 @@ import AIAssistantChat from './components/dashboard/AIAssistantChat';
 
 const navItems = [
   { name: 'الرئيسية', page: 'Dashboard', icon: LayoutDashboard },
+  { name: 'لوحة المتجر', page: 'StoreDashboard', icon: LayoutDashboard },
   { name: 'الطلبات', page: 'Orders', icon: ClipboardList },
   { name: 'العملاء', page: 'Clients', icon: Users },
   { name: 'العمال', page: 'Workers', icon: UserCog },

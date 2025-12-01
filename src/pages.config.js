@@ -7,6 +7,7 @@ import ClientReports from './pages/ClientReports';
 import Employees from './pages/Employees';
 import ContentGenerator from './pages/ContentGenerator';
 import Clients from './pages/Clients';
+import StoreDashboard from './pages/StoreDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -20,6 +21,7 @@ export const PAGES = {
     "Employees": Employees,
     "ContentGenerator": ContentGenerator,
     "Clients": Clients,
+    "StoreDashboard": StoreDashboard,
 }
 
 export const pagesConfig = {
