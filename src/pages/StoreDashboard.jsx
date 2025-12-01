@@ -12,7 +12,9 @@ const storeData = {
   merchant: {
     id: "royalalmarzooq",
     storeName: "ROYAL ALMARZOOQ",
-    owner: "Haroon"
+    owner: "Haroon",
+    logo: "https://zooka-ai.com/wp-content/uploads/2025/01/logo.png",
+    currency: "SAR"
   },
   stats: {
     todayRevenue: 2430.75,
@@ -34,9 +36,9 @@ const storeData = {
     { day: "الجمعة", orders: 190 }
   ],
   topProducts: [
-    { name: "سماعات لاسلكية احترافية", sku: "HP-001", orders: 52, revenue: 840.5 },
-    { name: "ساعة ذكية للأنشطة اليومية", sku: "SW-002", orders: 34, revenue: 620.0 },
-    { name: "لوحة مفاتيح ميكانيكية", sku: "KB-003", orders: 19, revenue: 320.0 }
+    { name: "سماعات لاسلكية احترافية", sku: "HP-001", orders: 52, revenue: 840.5, image: "https://zooka-ai.com/wp-content/uploads/2025/01/p1.png" },
+    { name: "ساعة ذكية للأنشطة اليومية", sku: "SW-002", orders: 34, revenue: 620.0, image: "https://zooka-ai.com/wp-content/uploads/2025/01/p2.png" },
+    { name: "لوحة مفاتيح ميكانيكية", sku: "KB-003", orders: 19, revenue: 320.0, image: "https://zooka-ai.com/wp-content/uploads/2025/01/p3.png" }
   ],
   recentOrders: [
     { orderId: "ORD-10234", customer: "Ahmed Ali", total: 249.0, status: "paid", paymentMethod: "Card", createdAt: "2025-12-02 09:15" },
@@ -74,9 +76,14 @@ export default function StoreDashboard() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">{merchant.storeName}</h1>
-          <p className="text-gray-500">مرحباً {merchant.owner}، هذه نظرة عامة على متجرك</p>
+        <div className="flex items-center gap-4">
+          {merchant.logo && (
+            <img src={merchant.logo} alt={merchant.storeName} className="w-14 h-14 rounded-xl object-contain bg-white shadow-md p-1" />
+          )}
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">{merchant.storeName}</h1>
+            <p className="text-gray-500">مرحباً {merchant.owner}، هذه نظرة عامة على متجرك</p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Badge className="bg-green-100 text-green-700 px-3 py-1">
@@ -207,10 +214,14 @@ export default function StoreDashboard() {
           <CardContent className="space-y-4">
             {topProducts.map((product, index) => (
               <div key={product.sku} className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold
-                  ${index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : 'bg-orange-400'}`}>
-                  {index + 1}
-                </div>
+                {product.image ? (
+                  <img src={product.image} alt={product.name} className="w-12 h-12 rounded-xl object-cover" />
+                ) : (
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold
+                    ${index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : 'bg-orange-400'}`}>
+                    {index + 1}
+                  </div>
+                )}
                 <div className="flex-1">
                   <p className="font-semibold text-gray-800">{product.name}</p>
                   <p className="text-xs text-gray-500">SKU: {product.sku}</p>
