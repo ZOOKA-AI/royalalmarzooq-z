@@ -61,24 +61,37 @@ export default function Workers() {
   const { data: workers = [], isLoading } = useQuery({
     queryKey: ['workers'],
     queryFn: () => base44.entities.Worker.list('-created_date'),
+    staleTime: 60000,
+    cacheTime: 300000,
   });
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Worker.create(data),
-    onSuccess: () => {
+    onSuccess: (newWorker) => {
       queryClient.invalidateQueries({ queryKey: ['workers'] });
       resetForm();
-      toast.success('تم إضافة العامل بنجاح');
+      toast.success('✅ تم إضافة العامل بنجاح!', {
+        description: `${newWorker.name} - ${newWorker.specialty}`,
+        duration: 3000
+      });
     },
+    onError: () => {
+      toast.error('❌ فشل إضافة العامل');
+    }
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Worker.update(id, data),
-    onSuccess: () => {
+    onSuccess: (updated) => {
       queryClient.invalidateQueries({ queryKey: ['workers'] });
       resetForm();
-      toast.success('تم تحديث العامل بنجاح');
+      toast.success('✅ تم تحديث العامل بنجاح!', {
+        description: `${updated.name} - ${updated.status}`
+      });
     },
+    onError: () => {
+      toast.error('❌ فشل تحديث العامل');
+    }
   });
 
   const deleteMutation = useMutation({
@@ -86,8 +99,11 @@ export default function Workers() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workers'] });
       setDeleteId(null);
-      toast.success('تم حذف العامل بنجاح');
+      toast.success('🗑️ تم حذف العامل بنجاح');
     },
+    onError: () => {
+      toast.error('❌ فشل حذف العامل');
+    }
   });
 
   const resetForm = () => {

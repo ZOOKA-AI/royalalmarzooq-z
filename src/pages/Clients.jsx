@@ -84,24 +84,39 @@ export default function Clients() {
   const { data: clients = [], isLoading } = useQuery({
     queryKey: ['clients'],
     queryFn: () => base44.entities.Client.list('-created_date'),
+    staleTime: 60000, // 1 minute cache
+    cacheTime: 300000, // 5 minutes
   });
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Client.create(data),
-    onSuccess: () => {
+    onSuccess: (newClient) => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       resetForm();
-      toast.success('تم إضافة العميل بنجاح');
+      toast.success('✅ تم إضافة العميل بنجاح!', {
+        description: `${newClient.name} - ${newClient.phone}`,
+        duration: 3000
+      });
     },
+    onError: () => {
+      toast.error('❌ فشل إضافة العميل', {
+        description: 'تحقق من البيانات وحاول مرة أخرى'
+      });
+    }
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Client.update(id, data),
-    onSuccess: () => {
+    onSuccess: (updated) => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       resetForm();
-      toast.success('تم تحديث العميل بنجاح');
+      toast.success('✅ تم تحديث العميل بنجاح!', {
+        description: updated.name
+      });
     },
+    onError: () => {
+      toast.error('❌ فشل تحديث العميل');
+    }
   });
 
   const deleteMutation = useMutation({
@@ -109,8 +124,11 @@ export default function Clients() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       setDeleteId(null);
-      toast.success('تم حذف العميل بنجاح');
+      toast.success('🗑️ تم حذف العميل بنجاح');
     },
+    onError: () => {
+      toast.error('❌ فشل حذف العميل');
+    }
   });
 
   const resetForm = () => {

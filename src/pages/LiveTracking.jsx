@@ -30,13 +30,15 @@ export default function LiveTracking() {
   const { data: workers = [], refetch } = useQuery({
     queryKey: ['workers-tracking'],
     queryFn: () => base44.entities.Worker.list(),
-    refetchInterval: 5000 // تحديث كل 5 ثوان
+    refetchInterval: 5000, // تحديث كل 5 ثوان
+    staleTime: 3000,
   });
 
   const { data: trackingData = [] } = useQuery({
     queryKey: ['tracking-data'],
     queryFn: () => base44.entities.Tracking.list('-last_update'),
-    refetchInterval: 3000 // تحديث كل 3 ثوان
+    refetchInterval: 3000, // تحديث كل 3 ثوان
+    staleTime: 2000,
   });
 
   const searchByPhone = async (phone) => {

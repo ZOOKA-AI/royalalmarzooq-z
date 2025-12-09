@@ -95,41 +95,62 @@ export default function Orders() {
   const { data: orders = [], isLoading: ordersLoading } = useQuery({
     queryKey: ['orders'],
     queryFn: () => base44.entities.Order.list('-created_date'),
+    staleTime: 30000, // 30 seconds
+    cacheTime: 300000, // 5 minutes
   });
 
   const { data: clients = [] } = useQuery({
     queryKey: ['clients'],
     queryFn: () => base44.entities.Client.list(),
+    staleTime: 60000, // 1 minute
   });
 
   const { data: services = [] } = useQuery({
     queryKey: ['services'],
     queryFn: () => base44.entities.Service.filter({ is_active: true }),
+    staleTime: 120000, // 2 minutes
   });
 
   const { data: workers = [] } = useQuery({
     queryKey: ['workers'],
     queryFn: () => base44.entities.Worker.list(),
+    staleTime: 60000,
   });
 
   const availableWorkers = workers.filter(w => w.status === 'متاح' || w.id === formData.worker_id);
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Order.create(data),
-    onSuccess: () => {
+    onSuccess: (newOrder) => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
       resetForm();
-      toast.success('تم إنشاء الطلب بنجاح');
+      toast.success('✅ تم إنشاء الطلب بنجاح!', {
+        description: `طلب ${newOrder.client_name} - ${newOrder.service_name}`,
+        duration: 3000
+      });
     },
+    onError: (error) => {
+      toast.error('❌ فشل إنشاء الطلب', {
+        description: 'حاول مرة أخرى أو تواصل مع الدعم',
+        duration: 4000
+      });
+    }
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Order.update(id, data),
-    onSuccess: () => {
+    onSuccess: (updatedOrder) => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
       resetForm();
-      toast.success('تم تحديث الطلب بنجاح');
+      toast.success('✅ تم تحديث الطلب بنجاح!', {
+        description: `حالة: ${updatedOrder.status}`,
+        duration: 3000
+      });
     },
+    onError: () => {
+      toast.error('❌ فشل تحديث الطلب');
+    }
   });
 
   const deleteMutation = useMutation({
@@ -137,8 +158,11 @@ export default function Orders() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
       setDeleteId(null);
-      toast.success('تم حذف الطلب بنجاح');
+      toast.success('🗑️ تم حذف الطلب بنجاح');
     },
+    onError: () => {
+      toast.error('❌ فشل حذف الطلب');
+    }
   });
 
   const resetForm = () => {

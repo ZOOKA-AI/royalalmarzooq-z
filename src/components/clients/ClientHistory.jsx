@@ -75,8 +75,13 @@ export default function ClientHistory({ client, onClose }) {
       queryClient.invalidateQueries({ queryKey: ['client-logs', client.id] });
       setShowLogForm(false);
       setLogData({ type: 'مكالمة', notes: '', result: 'ناجح' });
-      toast.success('تم إضافة سجل التواصل');
+      toast.success('✅ تم إضافة سجل التواصل بنجاح!', {
+        duration: 2500
+      });
     },
+    onError: () => {
+      toast.error('❌ فشل إضافة السجل');
+    }
   });
 
   const handleAddLog = () => {

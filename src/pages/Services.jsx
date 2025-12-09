@@ -75,24 +75,37 @@ export default function Services() {
   const { data: services = [], isLoading } = useQuery({
     queryKey: ['services'],
     queryFn: () => base44.entities.Service.list('-created_date'),
+    staleTime: 120000, // 2 minutes cache
+    cacheTime: 600000, // 10 minutes
   });
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Service.create(data),
-    onSuccess: () => {
+    onSuccess: (newService) => {
       queryClient.invalidateQueries({ queryKey: ['services'] });
       resetForm();
-      toast.success('تم إضافة الخدمة بنجاح');
+      toast.success('✅ تم إضافة الخدمة بنجاح!', {
+        description: `${newService.name} - ${newService.price} درهم`,
+        duration: 3000
+      });
     },
+    onError: () => {
+      toast.error('❌ فشل إضافة الخدمة');
+    }
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Service.update(id, data),
-    onSuccess: () => {
+    onSuccess: (updated) => {
       queryClient.invalidateQueries({ queryKey: ['services'] });
       resetForm();
-      toast.success('تم تحديث الخدمة بنجاح');
+      toast.success('✅ تم تحديث الخدمة بنجاح!', {
+        description: `${updated.name}`
+      });
     },
+    onError: () => {
+      toast.error('❌ فشل تحديث الخدمة');
+    }
   });
 
   const deleteMutation = useMutation({
@@ -100,8 +113,11 @@ export default function Services() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['services'] });
       setDeleteId(null);
-      toast.success('تم حذف الخدمة بنجاح');
+      toast.success('🗑️ تم حذف الخدمة بنجاح');
     },
+    onError: () => {
+      toast.error('❌ فشل حذف الخدمة');
+    }
   });
 
   const resetForm = () => {
