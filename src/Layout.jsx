@@ -30,6 +30,9 @@ const navItems = [
   { name: 'الخدمات', page: 'Services', icon: Wrench },
   { name: 'مولد المحتوى', page: 'ContentGenerator', icon: Wand2 },
   { name: 'تقارير العملاء', page: 'ClientReports', icon: FileText },
+  { name: 'محسن SEO', page: 'SEOOptimizer', icon: Bot },
+  { name: 'مولد فيديوهات', page: 'VideoCreator', icon: Bot },
+  { name: 'النشر التلقائي', page: 'AutoPoster', icon: Bot },
   { name: 'الإعدادات', page: 'Settings', icon: Settings },
 ];
 

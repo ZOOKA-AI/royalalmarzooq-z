@@ -8,6 +8,9 @@ import Employees from './pages/Employees';
 import ContentGenerator from './pages/ContentGenerator';
 import Clients from './pages/Clients';
 import StoreDashboard from './pages/StoreDashboard';
+import SEOOptimizer from './pages/SEOOptimizer';
+import VideoCreator from './pages/VideoCreator';
+import AutoPoster from './pages/AutoPoster';
 import __Layout from './Layout.jsx';
 
 
@@ -22,6 +25,9 @@ export const PAGES = {
     "ContentGenerator": ContentGenerator,
     "Clients": Clients,
     "StoreDashboard": StoreDashboard,
+    "SEOOptimizer": SEOOptimizer,
+    "VideoCreator": VideoCreator,
+    "AutoPoster": AutoPoster,
 }
 
 export const pagesConfig = {
