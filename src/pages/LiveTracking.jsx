@@ -19,6 +19,7 @@ import {
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import { toast } from 'sonner';
 import 'leaflet/dist/leaflet.css';
+import AIAnalytics from '../components/tracking/AIAnalytics';
 
 export default function LiveTracking() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -243,6 +244,9 @@ export default function LiveTracking() {
           </div>
         </CardContent>
       </Card>
+
+      {/* AI Analytics Section */}
+      <AIAnalytics trackingData={trackingData} selectedWorker={selectedWorker} />
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Workers List */}
