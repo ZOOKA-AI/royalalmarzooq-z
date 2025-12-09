@@ -14,7 +14,9 @@ import {
   Sparkles,
   FileText,
   Wand2,
-  Bot
+  Bot,
+  CreditCard,
+  Calculator
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { base44 } from '@/api/base44Client';
@@ -33,6 +35,9 @@ const navItems = [
   { name: 'محسن SEO', page: 'SEOOptimizer', icon: Bot },
   { name: 'مولد فيديوهات', page: 'VideoCreator', icon: Bot },
   { name: 'النشر التلقائي', page: 'AutoPoster', icon: Bot },
+  { name: 'بوابة الدفع', page: 'PaymentGateway', icon: CreditCard },
+  { name: 'الفواتير', page: 'Invoices', icon: FileText },
+  { name: 'عروض الأسعار', page: 'SmartQuote', icon: Calculator },
   { name: 'الإعدادات', page: 'Settings', icon: Settings },
 ];
 

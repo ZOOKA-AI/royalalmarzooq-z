@@ -11,6 +11,9 @@ import StoreDashboard from './pages/StoreDashboard';
 import SEOOptimizer from './pages/SEOOptimizer';
 import VideoCreator from './pages/VideoCreator';
 import AutoPoster from './pages/AutoPoster';
+import PaymentGateway from './pages/PaymentGateway';
+import Invoices from './pages/Invoices';
+import SmartQuote from './pages/SmartQuote';
 import __Layout from './Layout.jsx';
 
 
@@ -28,6 +31,9 @@ export const PAGES = {
     "SEOOptimizer": SEOOptimizer,
     "VideoCreator": VideoCreator,
     "AutoPoster": AutoPoster,
+    "PaymentGateway": PaymentGateway,
+    "Invoices": Invoices,
+    "SmartQuote": SmartQuote,
 }
 
 export const pagesConfig = {
