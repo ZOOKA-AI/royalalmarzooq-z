@@ -14,6 +14,7 @@ import AutoPoster from './pages/AutoPoster';
 import PaymentGateway from './pages/PaymentGateway';
 import Invoices from './pages/Invoices';
 import SmartQuote from './pages/SmartQuote';
+import LiveTracking from './pages/LiveTracking';
 import __Layout from './Layout.jsx';
 
 
@@ -34,6 +35,7 @@ export const PAGES = {
     "PaymentGateway": PaymentGateway,
     "Invoices": Invoices,
     "SmartQuote": SmartQuote,
+    "LiveTracking": LiveTracking,
 }
 
 export const pagesConfig = {
