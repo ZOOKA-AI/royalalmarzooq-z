@@ -20,7 +20,8 @@ import {
   MapPin,
   Calendar,
   Crown,
-  Radio
+  Radio,
+  MessageSquare
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { base44 } from '@/api/base44Client';
@@ -41,6 +42,7 @@ const navItems = [
   { name: 'مولد صور وأفكار', page: 'SocialMediaGenerator', icon: Sparkles },
   { name: 'الوكيل', page: 'AIAgent', icon: Bot },
   { name: 'راديو', page: 'Radio', icon: Radio },
+  { name: 'المحادثة الذكية', page: 'SmartChat', icon: MessageSquare },
   { name: 'مولد المحتوى', page: 'ContentGenerator', icon: Wand2 },
   { name: 'تقارير العملاء', page: 'ClientReports', icon: FileText },
   { name: 'محسن SEO', page: 'SEOOptimizer', icon: Bot },

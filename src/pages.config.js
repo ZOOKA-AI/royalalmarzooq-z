@@ -22,6 +22,7 @@ import WorkerApp from './pages/WorkerApp';
 import SocialMediaGenerator from './pages/SocialMediaGenerator';
 import AIAgent from './pages/AIAgent';
 import Radio from './pages/Radio';
+import SmartChat from './pages/SmartChat';
 import __Layout from './Layout.jsx';
 
 
@@ -50,6 +51,7 @@ export const PAGES = {
     "SocialMediaGenerator": SocialMediaGenerator,
     "AIAgent": AIAgent,
     "Radio": Radio,
+    "SmartChat": SmartChat,
 }
 
 export const pagesConfig = {
