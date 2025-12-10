@@ -21,6 +21,7 @@ import LoyaltyProgram from './pages/LoyaltyProgram';
 import WorkerApp from './pages/WorkerApp';
 import SocialMediaGenerator from './pages/SocialMediaGenerator';
 import AIAgent from './pages/AIAgent';
+import Radio from './pages/Radio';
 import __Layout from './Layout.jsx';
 
 
@@ -48,6 +49,7 @@ export const PAGES = {
     "WorkerApp": WorkerApp,
     "SocialMediaGenerator": SocialMediaGenerator,
     "AIAgent": AIAgent,
+    "Radio": Radio,
 }
 
 export const pagesConfig = {
