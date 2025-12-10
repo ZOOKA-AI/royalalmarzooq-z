@@ -38,6 +38,7 @@ const navItems = [
   { name: 'الحجز أونلاين', page: 'OnlineBookingPublic', icon: Calendar },
   { name: 'تطبيق العمال', page: 'WorkerApp', icon: UserCog },
   { name: 'مولد صور وأفكار', page: 'SocialMediaGenerator', icon: Sparkles },
+  { name: 'الوكيل', page: 'AIAgent', icon: Bot },
   { name: 'مولد المحتوى', page: 'ContentGenerator', icon: Wand2 },
   { name: 'تقارير العملاء', page: 'ClientReports', icon: FileText },
   { name: 'محسن SEO', page: 'SEOOptimizer', icon: Bot },

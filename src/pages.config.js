@@ -20,6 +20,7 @@ import OnlineBookingPublic from './pages/OnlineBookingPublic';
 import LoyaltyProgram from './pages/LoyaltyProgram';
 import WorkerApp from './pages/WorkerApp';
 import SocialMediaGenerator from './pages/SocialMediaGenerator';
+import AIAgent from './pages/AIAgent';
 import __Layout from './Layout.jsx';
 
 
@@ -46,6 +47,7 @@ export const PAGES = {
     "LoyaltyProgram": LoyaltyProgram,
     "WorkerApp": WorkerApp,
     "SocialMediaGenerator": SocialMediaGenerator,
+    "AIAgent": AIAgent,
 }
 
 export const pagesConfig = {
