@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { 
   Bot, Send, Mic, MicOff, Loader2, Sparkles, X, Maximize2, Minimize2,
   ClipboardList, Users, Calendar, TrendingUp, Camera, CameraOff, 
-  Volume2, VolumeX, Phone, MapPin, Wrench, DollarSign
+  Volume2, VolumeX, Phone, MapPin, Wrench, DollarSign, MessageSquare
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
@@ -14,11 +14,14 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '../../utils';
 
 const quickCommands = [
-  { label: 'طلب جديد', icon: ClipboardList, command: 'أريد إنشاء طلب جديد' },
-  { label: 'عميل جديد', icon: Users, command: 'أريد تسجيل عميل جديد' },
-  { label: 'الخدمات', icon: Wrench, command: 'ما هي الخدمات والأسعار؟' },
-  { label: 'طلبات اليوم', icon: Calendar, command: 'اعرض طلبات اليوم' },
-  { label: 'الإيرادات', icon: DollarSign, command: 'اعرض تقرير الإيرادات' },
+  { label: 'طلب جديد', icon: ClipboardList, command: 'افتح الطلبات' },
+  { label: 'عميل جديد', icon: Users, command: 'افتح العملاء' },
+  { label: 'مولد محتوى', icon: Sparkles, command: 'افتح مولد المحتوى' },
+  { label: 'ولد صورة', icon: Camera, command: 'ولد صورة عن خدمات التنظيف' },
+  { label: 'التتبع', icon: MapPin, command: 'افتح التتبع المباشر' },
+  { label: 'التقارير', icon: TrendingUp, command: 'افتح التقارير' },
+  { label: 'الوكيل', icon: Bot, command: 'افتح الوكيل الذكي' },
+  { label: 'راديو', icon: Volume2, command: 'افتح الراديو' },
 ];
 
 // قاعدة المعرفة للردود السريعة
@@ -256,6 +259,11 @@ export default function AIAssistantChat() {
     return null;
   };
 
+  // التحكم في النظام - فتح الصفحات
+  const handleNavigation = (pageName) => {
+    window.location.href = createPageUrl(pageName);
+  };
+
   // جلب البيانات الحقيقية من قاعدة البيانات
   const fetchRealData = async (type) => {
     try {
@@ -359,14 +367,82 @@ export default function AIAssistantChat() {
         }
       }
       // إنشاء طلب جديد
-      else if (lowerText.includes('طلب جديد') || lowerText.includes('انشاء طلب') || lowerText.includes('إنشاء طلب')) {
-        responseText = `✅ لإنشاء طلب جديد، أحتاج المعلومات التالية:\n\n`;
-        responseText += `1️⃣ اسم العميل\n`;
-        responseText += `2️⃣ رقم الهاتف\n`;
-        responseText += `3️⃣ نوع الخدمة\n`;
-        responseText += `4️⃣ العنوان\n\n`;
-        responseText += `أو يمكنك الذهاب لصفحة الطلبات مباشرة.\n\n`;
-        responseText += `اكتب: "اسم العميل: أحمد، هاتف: 0501234567، الخدمة: تنظيف كنب"`;
+      else if (lowerText.includes('طلب جديد') || lowerText.includes('انشاء طلب') || lowerText.includes('إنشاء طلب') || lowerText.includes('افتح طلبات') || lowerText.includes('افتح الطلبات')) {
+        responseText = `✅ جاري فتح صفحة الطلبات...`;
+        setTimeout(() => handleNavigation('Orders'), 1000);
+      }
+      // فتح صفحة العملاء
+      else if (lowerText.includes('افتح عملاء') || lowerText.includes('افتح العملاء') || lowerText.includes('صفحة العملاء')) {
+        responseText = `✅ جاري فتح صفحة العملاء...`;
+        setTimeout(() => handleNavigation('Clients'), 1000);
+      }
+      // فتح صفحة الخدمات
+      else if (lowerText.includes('افتح خدمات') || lowerText.includes('افتح الخدمات') || lowerText.includes('صفحة الخدمات')) {
+        responseText = `✅ جاري فتح صفحة الخدمات...`;
+        setTimeout(() => handleNavigation('Services'), 1000);
+      }
+      // فتح مولد المحتوى
+      else if (lowerText.includes('مولد محتوى') || lowerText.includes('محتوى سوشيال') || lowerText.includes('منشور')) {
+        responseText = `✅ جاري فتح مولد المحتوى الذكي...`;
+        setTimeout(() => handleNavigation('ContentGenerator'), 1000);
+      }
+      // فتح محسن SEO
+      else if (lowerText.includes('seo') || lowerText.includes('محسن') || lowerText.includes('تحسين موقع')) {
+        responseText = `✅ جاري فتح محسن SEO...`;
+        setTimeout(() => handleNavigation('SEOOptimizer'), 1000);
+      }
+      // فتح مولد الصور والأفكار
+      else if (lowerText.includes('صور') || lowerText.includes('أفكار') || lowerText.includes('سوشيال ميديا')) {
+        responseText = `✅ جاري فتح مولد الصور والأفكار...`;
+        setTimeout(() => handleNavigation('SocialMediaGenerator'), 1000);
+      }
+      // فتح الوكيل الذكي
+      else if (lowerText.includes('الوكيل') || lowerText.includes('gemini') || lowerText.includes('جوجل')) {
+        responseText = `✅ جاري فتح الوكيل الذكي (Gemini)...`;
+        setTimeout(() => handleNavigation('AIAgent'), 1000);
+      }
+      // فتح الراديو
+      else if (lowerText.includes('راديو') || lowerText.includes('موسيقى')) {
+        responseText = `✅ جاري فتح راديو رويال...`;
+        setTimeout(() => handleNavigation('Radio'), 1000);
+      }
+      // فتح المحادثة الذكية
+      else if (lowerText.includes('محادثة') || lowerText.includes('شات')) {
+        responseText = `✅ جاري فتح المحادثة الذكية...`;
+        setTimeout(() => handleNavigation('SmartChat'), 1000);
+      }
+      // فتح التتبع المباشر
+      else if (lowerText.includes('تتبع') || lowerText.includes('موقع عمال') || lowerText.includes('خريطة')) {
+        responseText = `✅ جاري فتح التتبع المباشر...`;
+        setTimeout(() => handleNavigation('LiveTracking'), 1000);
+      }
+      // فتح برنامج الولاء
+      else if (lowerText.includes('ولاء') || lowerText.includes('نقاط') || lowerText.includes('كوبون')) {
+        responseText = `✅ جاري فتح برنامج الولاء...`;
+        setTimeout(() => handleNavigation('LoyaltyProgram'), 1000);
+      }
+      // فتح التقارير
+      else if (lowerText.includes('تقارير') || lowerText.includes('تحليلات') || lowerText.includes('احصائيات')) {
+        responseText = `✅ جاري فتح التقارير المتقدمة...`;
+        setTimeout(() => handleNavigation('AdvancedReports'), 1000);
+      }
+      // توليد صورة بالذكاء الاصطناعي
+      else if (lowerText.includes('ولد صورة') || lowerText.includes('اعمل صورة') || lowerText.includes('صمم صورة')) {
+        responseText = `🎨 جاري توليد صورة بالذكاء الاصطناعي...\n\nما هو موضوع الصورة؟`;
+
+        // إذا كان هناك وصف للصورة
+        const imagePrompt = text.replace(/ولد صورة|اعمل صورة|صمم صورة/gi, '').trim();
+        if (imagePrompt.length > 5) {
+          try {
+            const imageResponse = await base44.integrations.Core.GenerateImage({
+              prompt: `Professional cleaning company advertisement, UAE style. ${imagePrompt}. Modern design with purple and white colors. High quality.`
+            });
+
+            responseText = `✅ تم توليد الصورة!\n\n[صورة: ${imageResponse.url}]\n\nيمكنك تحميلها من الرابط أعلاه 📥`;
+          } catch (error) {
+            responseText = `عذراً، حدث خطأ في توليد الصورة. حاول مرة أخرى.`;
+          }
+        }
       }
       // تسجيل عميل
       else if (lowerText.includes('عميل جديد') || lowerText.includes('تسجيل عميل')) {
@@ -378,16 +454,32 @@ export default function AIAssistantChat() {
       // استخدام الذكاء الاصطناعي للأسئلة المعقدة
       else {
         const response = await base44.integrations.Core.InvokeLLM({
-          prompt: `أنت مساعد ذكي لشركة رويال للتنظيف والتعقيم ومكافحة الحشرات في الإمارات.
+          prompt: `أنت مساعد ذكي متقدم لشركة رويال للتنظيف والتعقيم ومكافحة الحشرات في الإمارات.
 
-معلومات الشركة:
-- رقم التواصل: 0563177803
-- الخدمات: تنظيف كنب (35-50 درهم)، سجاد (8-10 درهم/متر)، ستائر (90-150 درهم)، خزانات (250-300 درهم)، مطابخ (من 60 درهم)، شقق (من 500 درهم)، فلل (من 1200 درهم)، مكيفات (50 درهم)، مكافحة حشرات (250 درهم/نوع)
-- نعمل 24 ساعة في جميع الإمارات
+      معلومات الشركة:
+      - رقم التواصل: 0563177803
+      - الخدمات: تنظيف كنب (35-50 درهم)، سجاد (8-10 درهم/متر)، ستائر (90-150 درهم)، خزانات (250-300 درهم)، مطابخ (من 60 درهم)، شقق (من 500 درهم)، فلل (من 1200 درهم)، مكيفات (50 درهم)، مكافحة حشرات (250 درهم/نوع)
+      - نعمل 24 ساعة في جميع الإمارات
 
-سؤال العميل: ${text}
+      القدرات المتاحة للمستخدم في النظام:
+      - فتح الصفحات (الطلبات، العملاء، الخدمات، التقارير، التتبع، إلخ)
+      - توليد محتوى سوشيال ميديا
+      - توليد صور بالذكاء الاصطناعي
+      - تحسين SEO
+      - الوكيل الذكي (Gemini)
+      - راديو رويال
+      - برنامج الولاء
+      - التتبع المباشر للعمال
 
-أجب بشكل مختصر ومفيد وودود باللغة العربية. استخدم الإيموجي باعتدال.`,
+      إذا طلب فتح صفحة أو استخدام أداة، أخبره أن يكتب مثلاً:
+      - "افتح الطلبات" أو "افتح صفحة العملاء"
+      - "ولد صورة عن تنظيف الكنب"
+      - "افتح مولد المحتوى"
+
+      سؤال العميل: ${text}
+
+      أجب بشكل مختصر ومفيد وودود باللغة العربية. استخدم الإيموجي باعتدال. إذا كان الطلب يحتاج بحث من الإنترنت، اقترح استخدام "الوكيل الذكي" أو "محسن SEO".`,
+          add_context_from_internet: true,
           response_json_schema: {
             type: "object",
             properties: {
