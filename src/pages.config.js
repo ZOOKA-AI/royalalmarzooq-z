@@ -15,6 +15,10 @@ import PaymentGateway from './pages/PaymentGateway';
 import Invoices from './pages/Invoices';
 import SmartQuote from './pages/SmartQuote';
 import LiveTracking from './pages/LiveTracking';
+import AdvancedReports from './pages/AdvancedReports';
+import OnlineBookingPublic from './pages/OnlineBookingPublic';
+import LoyaltyProgram from './pages/LoyaltyProgram';
+import WorkerApp from './pages/WorkerApp';
 import __Layout from './Layout.jsx';
 
 
@@ -36,6 +40,10 @@ export const PAGES = {
     "Invoices": Invoices,
     "SmartQuote": SmartQuote,
     "LiveTracking": LiveTracking,
+    "AdvancedReports": AdvancedReports,
+    "OnlineBookingPublic": OnlineBookingPublic,
+    "LoyaltyProgram": LoyaltyProgram,
+    "WorkerApp": WorkerApp,
 }
 
 export const pagesConfig = {

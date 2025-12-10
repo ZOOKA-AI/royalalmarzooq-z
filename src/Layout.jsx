@@ -17,7 +17,9 @@ import {
   Bot,
   CreditCard,
   Calculator,
-  MapPin
+  MapPin,
+  Calendar,
+  Crown
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { base44 } from '@/api/base44Client';
@@ -31,6 +33,10 @@ const navItems = [
   { name: 'العمال', page: 'Workers', icon: UserCog },
   { name: 'الموظفين', page: 'Employees', icon: Users },
   { name: 'الخدمات', page: 'Services', icon: Wrench },
+  { name: 'التقارير المتقدمة', page: 'AdvancedReports', icon: FileText },
+  { name: 'برنامج الولاء', page: 'LoyaltyProgram', icon: Crown },
+  { name: 'الحجز أونلاين', page: 'OnlineBookingPublic', icon: Calendar },
+  { name: 'تطبيق العمال', page: 'WorkerApp', icon: UserCog },
   { name: 'مولد المحتوى', page: 'ContentGenerator', icon: Wand2 },
   { name: 'تقارير العملاء', page: 'ClientReports', icon: FileText },
   { name: 'محسن SEO', page: 'SEOOptimizer', icon: Bot },
