@@ -23,6 +23,7 @@ import SocialMediaGenerator from './pages/SocialMediaGenerator';
 import AIAgent from './pages/AIAgent';
 import Radio from './pages/Radio';
 import SmartChat from './pages/SmartChat';
+import APIKeys from './pages/APIKeys';
 import __Layout from './Layout.jsx';
 
 
@@ -52,6 +53,7 @@ export const PAGES = {
     "AIAgent": AIAgent,
     "Radio": Radio,
     "SmartChat": SmartChat,
+    "APIKeys": APIKeys,
 }
 
 export const pagesConfig = {
