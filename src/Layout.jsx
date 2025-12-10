@@ -37,6 +37,7 @@ const navItems = [
   { name: 'برنامج الولاء', page: 'LoyaltyProgram', icon: Crown },
   { name: 'الحجز أونلاين', page: 'OnlineBookingPublic', icon: Calendar },
   { name: 'تطبيق العمال', page: 'WorkerApp', icon: UserCog },
+  { name: 'مولد صور وأفكار', page: 'SocialMediaGenerator', icon: Sparkles },
   { name: 'مولد المحتوى', page: 'ContentGenerator', icon: Wand2 },
   { name: 'تقارير العملاء', page: 'ClientReports', icon: FileText },
   { name: 'محسن SEO', page: 'SEOOptimizer', icon: Bot },

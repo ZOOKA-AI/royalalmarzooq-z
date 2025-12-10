@@ -19,6 +19,7 @@ import AdvancedReports from './pages/AdvancedReports';
 import OnlineBookingPublic from './pages/OnlineBookingPublic';
 import LoyaltyProgram from './pages/LoyaltyProgram';
 import WorkerApp from './pages/WorkerApp';
+import SocialMediaGenerator from './pages/SocialMediaGenerator';
 import __Layout from './Layout.jsx';
 
 
@@ -44,6 +45,7 @@ export const PAGES = {
     "OnlineBookingPublic": OnlineBookingPublic,
     "LoyaltyProgram": LoyaltyProgram,
     "WorkerApp": WorkerApp,
+    "SocialMediaGenerator": SocialMediaGenerator,
 }
 
 export const pagesConfig = {
