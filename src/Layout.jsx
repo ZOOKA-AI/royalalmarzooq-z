@@ -22,7 +22,8 @@ import {
   Crown,
   Radio,
   MessageSquare,
-  Key
+  Key,
+  Shield
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { base44 } from '@/api/base44Client';
@@ -54,6 +55,11 @@ const navItems = [
   { name: 'الفواتير', page: 'Invoices', icon: FileText },
   { name: 'عروض الأسعار', page: 'SmartQuote', icon: Calculator },
   { name: 'مفاتيح API', page: 'APIKeys', icon: Key },
+  { name: '💰 الأسعار', page: 'Pricing', icon: CreditCard },
+  { name: '📖 المدونة', page: 'Blog', icon: FileText },
+  { name: '👥 من نحن', page: 'About', icon: Users },
+  { name: '🔒 الخصوصية', page: 'Privacy', icon: Shield },
+  { name: '📋 الشروط', page: 'Terms', icon: FileText },
   { name: 'الإعدادات', page: 'Settings', icon: Settings },
 ];
 
