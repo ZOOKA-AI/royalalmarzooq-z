@@ -30,6 +30,8 @@ import About from './pages/About';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Blog from './pages/Blog';
+import Landing from './pages/Landing';
+import Licenses from './pages/Licenses';
 import __Layout from './Layout.jsx';
 
 
@@ -66,6 +68,8 @@ export const PAGES = {
     "Privacy": Privacy,
     "Terms": Terms,
     "Blog": Blog,
+    "Landing": Landing,
+    "Licenses": Licenses,
 }
 
 export const pagesConfig = {

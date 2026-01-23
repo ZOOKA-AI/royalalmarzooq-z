@@ -28,6 +28,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { base44 } from '@/api/base44Client';
 import AIAssistantChat from './components/dashboard/AIAssistantChat';
+import SEOHead from './components/SEOHead';
 
 const navItems = [
   { name: 'الرئيسية', page: 'Dashboard', icon: LayoutDashboard },
@@ -55,11 +56,6 @@ const navItems = [
   { name: 'الفواتير', page: 'Invoices', icon: FileText },
   { name: 'عروض الأسعار', page: 'SmartQuote', icon: Calculator },
   { name: 'مفاتيح API', page: 'APIKeys', icon: Key },
-  { name: '💰 الأسعار', page: 'Pricing', icon: CreditCard },
-  { name: '📖 المدونة', page: 'Blog', icon: FileText },
-  { name: '👥 من نحن', page: 'About', icon: Users },
-  { name: '🔒 الخصوصية', page: 'Privacy', icon: Shield },
-  { name: '📋 الشروط', page: 'Terms', icon: FileText },
   { name: 'الإعدادات', page: 'Settings', icon: Settings },
 ];
 
@@ -71,7 +67,9 @@ export default function Layout({ children, currentPageName }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50" dir="rtl">
+    <>
+      <SEOHead pageName={currentPageName} />
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50" dir="rtl">
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 right-0 left-0 bg-white border-b border-purple-100 z-50 px-4 py-3 flex items-center justify-between shadow-sm">
         <Button 
