@@ -267,6 +267,110 @@ ${contentForm.customTopic ? `موضوع إضافي: ${contentForm.customTopic}` 
     setIsGenerating(true);
     try {
       const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `أنت خبير حملات إعلانية. أنشئ حملة إعلانية احترافية بناءً على:
+        
+الهدف: ${campaignObjectives.find(o => o.id === campaignForm.objective)?.name}
+الجمهور المستهدف: ${targetAudiences.find(a => a.id === campaignForm.audience)?.name}
+الميزانية: ${campaignForm.budget} درهم لمدة ${campaignForm.duration} أيام
+المحتوى: ${generatedContent.post_text}
+
+أنشئ:
+1. عنوان الإعلان (جذاب، 25 حرف)
+2. نص الإعلان (مقنع، 90 حرف)
+3. دعوة للتفاعل
+4. الكلمات المفتاحية
+5. توزيع الميزانية اليومية
+6. معدل النقر المتوقع CTR
+7. التكلفة المتوقعة للنقرة CPC
+8. العملاء المتوقعين`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            ad_title: { type: "string" },
+            ad_text: { type: "string" },
+            cta: { type: "string" },
+            keywords: { type: "array", items: { type: "string" } },
+            daily_budget: { type: "number" },
+            expected_ctr: { type: "string" },
+            expected_cpc: { type: "string" },
+            expected_leads: { type: "number" }
+          }
+        }
+      });
+
+      const newCampaign = {
+        id: Date.now(),
+        ...response,
+        objective: campaignForm.objective,
+        audience: campaignForm.audience,
+        budget: campaignForm.budget,
+        duration: campaignForm.duration,
+        platforms: campaignForm.platforms,
+        status: 'مسودة',
+        created_at: new Date().toISOString(),
+      };
+
+      setCampaigns([...campaigns, newCampaign]);
+      toast.success('✅ تم إنشاء الحملة الإعلانية!');
+    } catch (error) {
+      toast.error('حدث خطأ في إنشاء الحملة');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const schedulePost = () => {
+    if (!generatedContent || !scheduleForm.date) {
+      toast.error('يرجى توليد المحتوى واختيار التاريخ');
+      return;
+    }
+
+    const newSchedule = {
+      id: Date.now(),
+      content: generatedContent,
+      image: generatedImage,
+      date: scheduleForm.date,
+      time: scheduleForm.time,
+      platform: scheduleForm.platform,
+      status: 'مجدول',
+    };
+
+    setScheduledPosts([...scheduledPosts, newSchedule]);
+    toast.success('✅ تم جدولة المنشور!');
+  };
+
+  const fetchAdAnalytics = async () => {
+    setIsGenerating(true);
+    try {
+      // محاكاة بيانات تحليلية
+      const mockAnalytics = {
+        impressions: Math.floor(Math.random() * 50000) + 10000,
+        clicks: Math.floor(Math.random() * 2000) + 500,
+        ctr: (Math.random() * 3 + 1).toFixed(2),
+        conversions: Math.floor(Math.random() * 100) + 20,
+        cost: Math.floor(Math.random() * 800) + 200,
+        cpc: (Math.random() * 2 + 0.5).toFixed(2),
+        roas: (Math.random() * 3 + 2).toFixed(2),
+      };
+      
+      setAdAnalytics(mockAnalytics);
+      toast.success('تم تحديث التحليلات');
+    } catch (error) {
+      toast.error('حدث خطأ في جلب التحليلات');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const createCampaign = async () => {
+    if (!generatedContent) {
+      toast.error('يرجى توليد المحتوى أولاً');
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const response = await base44.integrations.Core.InvokeLLM({
         prompt: `أنت خبير إعلانات رقمية. أنشئ حملة إعلانية احترافية لشركة تنظيف.
         
 الهدف: ${campaignObjectives.find(o => o.id === campaignForm.objective)?.name}
