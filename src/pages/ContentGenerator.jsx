@@ -39,6 +39,21 @@ const contentTypes = [
 ];
 
 const campaignObjectives = [
+  { id: 'awareness', name: 'الوعي بالعلامة', budget: '300-500' },
+  { id: 'engagement', name: 'التفاعل', budget: '200-400' },
+  { id: 'traffic', name: 'زيارات الموقع', budget: '400-600' },
+  { id: 'leads', name: 'جذب عملاء', budget: '500-800' },
+  { id: 'conversions', name: 'مبيعات', budget: '600-1000' },
+];
+
+const targetAudiences = [
+  { id: 'homeowners', name: 'أصحاب المنازل', age: '25-45' },
+  { id: 'companies', name: 'الشركات', age: '30-55' },
+  { id: 'newmovers', name: 'المنتقلون الجدد', age: '25-40' },
+  { id: 'families', name: 'العائلات', age: '28-50' },
+];
+
+const campaignObjectives = [
   { id: 'awareness', name: 'زيادة الوعي بالعلامة', budget: '50-100 درهم/يوم' },
   { id: 'engagement', name: 'زيادة التفاعل', budget: '30-70 درهم/يوم' },
   { id: 'leads', name: 'جمع عملاء محتملين', budget: '70-150 درهم/يوم' },
