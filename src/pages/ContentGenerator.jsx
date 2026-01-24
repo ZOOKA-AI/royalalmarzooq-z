@@ -97,6 +97,20 @@ export default function ContentGenerator() {
     customTopic: '',
   });
 
+  const [campaignForm, setCampaignForm] = useState({
+    objective: 'awareness',
+    audience: 'homeowners',
+    budget: 500,
+    duration: 7,
+    platforms: ['facebook', 'instagram'],
+  });
+
+  const [scheduleForm, setScheduleForm] = useState({
+    date: '',
+    time: '20:00',
+    platform: 'instagram',
+  });
+
   const services = [
     'تنظيف كنب', 'تنظيف سجاد', 'تنظيف ستائر', 'تنظيف خزانات',
     'تنظيف مطابخ', 'تنظيف شقق', 'تنظيف فلل', 'مكافحة حشرات',
