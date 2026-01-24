@@ -77,6 +77,9 @@ export default function ContentGenerator() {
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
   const [campaigns, setCampaigns] = useState([]);
   const [scheduledPosts, setScheduledPosts] = useState([]);
+  const [adAnalytics, setAdAnalytics] = useState(null);
+  const [campaigns, setCampaigns] = useState([]);
+  const [scheduledPosts, setScheduledPosts] = useState([]);
   const [showCampaignForm, setShowCampaignForm] = useState(false);
   const [campaignForm, setCampaignForm] = useState({
     name: '',
