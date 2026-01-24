@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -15,7 +16,8 @@ import {
 } from "@/components/ui/select";
 import { 
   Sparkles, ImageIcon, Video, Calendar, Send, Download, Copy, RefreshCw,
-  Instagram, Facebook, Clock, CheckCircle, Loader2, Wand2
+  Instagram, Facebook, Clock, CheckCircle, Loader2, Wand2, Target, 
+  TrendingUp, DollarSign, Users, BarChart3, Eye, MousePointer
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
@@ -39,33 +41,18 @@ const contentTypes = [
 ];
 
 const campaignObjectives = [
-  { id: 'awareness', name: 'الوعي بالعلامة', budget: '300-500' },
-  { id: 'engagement', name: 'التفاعل', budget: '200-400' },
-  { id: 'traffic', name: 'زيارات الموقع', budget: '400-600' },
-  { id: 'leads', name: 'جذب عملاء', budget: '500-800' },
-  { id: 'conversions', name: 'مبيعات', budget: '600-1000' },
+  { id: 'awareness', name: 'الوعي بالعلامة', budget: '300-500', icon: Eye },
+  { id: 'engagement', name: 'التفاعل', budget: '200-400', icon: MousePointer },
+  { id: 'traffic', name: 'زيارات الموقع', budget: '400-600', icon: TrendingUp },
+  { id: 'leads', name: 'جذب عملاء', budget: '500-800', icon: Users },
+  { id: 'conversions', name: 'مبيعات', budget: '600-1000', icon: DollarSign },
 ];
 
 const targetAudiences = [
-  { id: 'homeowners', name: 'أصحاب المنازل', age: '25-45' },
-  { id: 'companies', name: 'الشركات', age: '30-55' },
-  { id: 'newmovers', name: 'المنتقلون الجدد', age: '25-40' },
-  { id: 'families', name: 'العائلات', age: '28-50' },
-];
-
-const campaignObjectives = [
-  { id: 'awareness', name: 'زيادة الوعي بالعلامة', budget: '50-100 درهم/يوم' },
-  { id: 'engagement', name: 'زيادة التفاعل', budget: '30-70 درهم/يوم' },
-  { id: 'leads', name: 'جمع عملاء محتملين', budget: '70-150 درهم/يوم' },
-  { id: 'conversions', name: 'زيادة المبيعات', budget: '100-300 درهم/يوم' },
-  { id: 'traffic', name: 'زيادة الزيارات', budget: '40-80 درهم/يوم' },
-];
-
-const targetAudiences = [
-  { id: 'homeowners', name: 'أصحاب المنازل', age: '25-55', interests: 'تنظيف, ديكور منزلي' },
-  { id: 'companies', name: 'الشركات', age: '30-60', interests: 'خدمات B2B, مكاتب' },
-  { id: 'villas', name: 'أصحاب الفلل', age: '35-65', interests: 'رفاهية, خدمات راقية' },
-  { id: 'newlyweds', name: 'المتزوجون حديثاً', age: '22-35', interests: 'منزل جديد, عائلة' },
+  { id: 'homeowners', name: 'أصحاب المنازل', age: '25-45', interests: 'ديكور، عقارات' },
+  { id: 'companies', name: 'الشركات', age: '30-55', interests: 'أعمال، مكاتب' },
+  { id: 'newmovers', name: 'المنتقلون الجدد', age: '25-40', interests: 'عقارات، انتقال' },
+  { id: 'families', name: 'العائلات', age: '28-50', interests: 'أطفال، منزل' },
 ];
 
 export default function ContentGenerator() {
@@ -78,17 +65,6 @@ export default function ContentGenerator() {
   const [campaigns, setCampaigns] = useState([]);
   const [scheduledPosts, setScheduledPosts] = useState([]);
   const [adAnalytics, setAdAnalytics] = useState(null);
-  const [campaigns, setCampaigns] = useState([]);
-  const [scheduledPosts, setScheduledPosts] = useState([]);
-  const [showCampaignForm, setShowCampaignForm] = useState(false);
-  const [campaignForm, setCampaignForm] = useState({
-    name: '',
-    objective: 'awareness',
-    platform: 'facebook',
-    budget: '',
-    duration: 7,
-    audience: 'homeowners',
-  });
 
   const [contentForm, setContentForm] = useState({
     platform: 'instagram',
@@ -106,7 +82,7 @@ export default function ContentGenerator() {
   });
 
   const [scheduleForm, setScheduleForm] = useState({
-    date: '',
+    date: format(addDays(new Date(), 1), 'yyyy-MM-dd'),
     time: '20:00',
     platform: 'instagram',
   });
@@ -248,16 +224,6 @@ ${contentForm.customTopic ? `موضوع إضافي: ${contentForm.customTopic}` 
     }
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    toast.success('تم النسخ!');
-  };
-
-  const getPlatformIcon = (platform) => {
-    const p = platforms.find(pl => pl.id === platform || pl.name.includes(platform));
-    return p ? p.icon : Send;
-  };
-
   const createCampaign = async () => {
     if (!generatedContent) {
       toast.error('يرجى توليد المحتوى أولاً');
@@ -278,11 +244,11 @@ ${contentForm.customTopic ? `موضوع إضافي: ${contentForm.customTopic}` 
 1. عنوان الإعلان (جذاب، 25 حرف)
 2. نص الإعلان (مقنع، 90 حرف)
 3. دعوة للتفاعل
-4. الكلمات المفتاحية
+4. الكلمات المفتاحية (5 كلمات)
 5. توزيع الميزانية اليومية
-6. معدل النقر المتوقع CTR
-7. التكلفة المتوقعة للنقرة CPC
-8. العملاء المتوقعين`,
+6. معدل النقر المتوقع CTR (نسبة مئوية)
+7. التكلفة المتوقعة للنقرة CPC (درهم)
+8. العملاء المتوقعين (عدد)`,
         response_json_schema: {
           type: "object",
           properties: {
@@ -342,7 +308,6 @@ ${contentForm.customTopic ? `موضوع إضافي: ${contentForm.customTopic}` 
   const fetchAdAnalytics = async () => {
     setIsGenerating(true);
     try {
-      // محاكاة بيانات تحليلية
       const mockAnalytics = {
         impressions: Math.floor(Math.random() * 50000) + 10000,
         clicks: Math.floor(Math.random() * 2000) + 500,
@@ -362,102 +327,14 @@ ${contentForm.customTopic ? `موضوع إضافي: ${contentForm.customTopic}` 
     }
   };
 
-  const createCampaign = async () => {
-    if (!generatedContent) {
-      toast.error('يرجى توليد المحتوى أولاً');
-      return;
-    }
-
-    setIsGenerating(true);
-    try {
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `أنت خبير إعلانات رقمية. أنشئ حملة إعلانية احترافية لشركة تنظيف.
-        
-الهدف: ${campaignObjectives.find(o => o.id === campaignForm.objective)?.name}
-المنصة: ${campaignForm.platform === 'facebook' ? 'فيسبوك' : 'انستغرام'}
-الميزانية: ${campaignForm.budget} درهم
-المدة: ${campaignForm.duration} أيام
-الجمهور المستهدف: ${targetAudiences.find(a => a.id === campaignForm.audience)?.name}
-
-المحتوى المتوفر:
-${generatedContent.post_text}
-
-أنشئ:
-1. عنوان إعلان جذاب
-2. نص إعلاني مختصر ومقنع
-3. دعوة لإجراء واضحة
-4. الكلمات المفتاحية للاستهداف
-5. توزيع مقترح للميزانية
-6. مؤشرات الأداء المتوقعة (Impressions, Clicks, CTR)`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            ad_title: { type: "string" },
-            ad_copy: { type: "string" },
-            cta_text: { type: "string" },
-            targeting_keywords: { type: "array", items: { type: "string" } },
-            budget_breakdown: { type: "object" },
-            expected_performance: { type: "object" }
-          }
-        }
-      });
-
-      const newCampaign = {
-        id: Date.now(),
-        name: campaignForm.name || `حملة ${format(new Date(), 'dd/MM')}`,
-        ...campaignForm,
-        ad_details: response,
-        content: generatedContent,
-        image: generatedImage,
-        status: 'نشط',
-        created_at: new Date().toISOString(),
-        performance: {
-          impressions: 0,
-          clicks: 0,
-          conversions: 0,
-          spent: 0
-        }
-      };
-
-      setCampaigns(prev => [newCampaign, ...prev]);
-      setShowCampaignForm(false);
-      toast.success('✅ تم إنشاء الحملة الإعلانية بنجاح!');
-    } catch (error) {
-      toast.error('حدث خطأ في إنشاء الحملة');
-    } finally {
-      setIsGenerating(false);
-    }
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    toast.success('تم النسخ!');
   };
 
-  const schedulePost = (date, time) => {
-    if (!generatedContent) {
-      toast.error('يرجى توليد المحتوى أولاً');
-      return;
-    }
-
-    const scheduledPost = {
-      id: Date.now(),
-      content: generatedContent,
-      image: generatedImage,
-      platform: contentForm.platform,
-      scheduled_date: date,
-      scheduled_time: time,
-      status: 'مجدول'
-    };
-
-    setScheduledPosts(prev => [scheduledPost, ...prev]);
-    toast.success('📅 تم جدولة المنشور بنجاح!');
-  };
-
-  const suggestBudget = (objective, duration) => {
-    const obj = campaignObjectives.find(o => o.id === objective);
-    if (!obj) return 'غير متوفر';
-    
-    const [min, max] = obj.budget.match(/\d+/g).map(Number);
-    const totalMin = min * duration;
-    const totalMax = max * duration;
-    
-    return `${totalMin}-${totalMax} درهم (لمدة ${duration} أيام)`;
+  const getPlatformIcon = (platform) => {
+    const p = platforms.find(pl => pl.id === platform || pl.name.includes(platform));
+    return p ? p.icon : Send;
   };
 
   return (
@@ -466,32 +343,36 @@ ${generatedContent.post_text}
       <div>
         <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
           <Sparkles className="h-6 w-6 text-purple-600" />
-          مولد المحتوى الذكي
+          مولد المحتوى والحملات الإعلانية
         </h1>
-        <p className="text-gray-500">توليد محتوى وصور تلقائياً للسوشيال ميديا</p>
+        <p className="text-gray-500">توليد محتوى، صور، حملات، وجدولة تلقائياً</p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5 gap-1">
-          <TabsTrigger value="generate" className="flex items-center gap-1 text-xs">
-            <Wand2 className="h-3 w-3" />
-            المحتوى
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="generate" className="flex items-center gap-1">
+            <Wand2 className="h-4 w-4" />
+            <span className="hidden sm:inline">محتوى</span>
           </TabsTrigger>
-          <TabsTrigger value="image" className="flex items-center gap-1 text-xs">
-            <ImageIcon className="h-3 w-3" />
-            الصور
+          <TabsTrigger value="image" className="flex items-center gap-1">
+            <ImageIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">صور</span>
           </TabsTrigger>
-          <TabsTrigger value="campaigns" className="flex items-center gap-1 text-xs">
-            <Send className="h-3 w-3" />
-            الحملات
+          <TabsTrigger value="campaign" className="flex items-center gap-1">
+            <Target className="h-4 w-4" />
+            <span className="hidden sm:inline">حملات</span>
           </TabsTrigger>
-          <TabsTrigger value="schedule" className="flex items-center gap-1 text-xs">
-            <Clock className="h-3 w-3" />
-            الجدولة
+          <TabsTrigger value="schedule" className="flex items-center gap-1">
+            <Clock className="h-4 w-4" />
+            <span className="hidden sm:inline">جدولة</span>
           </TabsTrigger>
-          <TabsTrigger value="plan" className="flex items-center gap-1 text-xs">
-            <Calendar className="h-3 w-3" />
-            خطة شهرية
+          <TabsTrigger value="analytics" className="flex items-center gap-1">
+            <BarChart3 className="h-4 w-4" />
+            <span className="hidden sm:inline">تحليلات</span>
+          </TabsTrigger>
+          <TabsTrigger value="plan" className="flex items-center gap-1">
+            <Calendar className="h-4 w-4" />
+            <span className="hidden sm:inline">خطة</span>
           </TabsTrigger>
         </TabsList>
 
@@ -672,289 +553,370 @@ ${generatedContent.post_text}
           </Card>
         </TabsContent>
 
-        {/* Campaigns Tab */}
-        <TabsContent value="campaigns" className="space-y-6">
+        {/* Campaign Tab */}
+        <TabsContent value="campaign" className="space-y-6">
           <Card className="border-0 shadow-lg">
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>الحملات الإعلانية</CardTitle>
-                  <CardDescription>إنشاء وإدارة حملات Facebook و Instagram</CardDescription>
-                </div>
-                <Button 
-                  onClick={() => setShowCampaignForm(true)}
-                  disabled={!generatedContent}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90"
-                >
-                  <Send className="h-4 w-4 ml-2" />
-                  حملة جديدة
-                </Button>
-              </div>
+              <CardTitle>إنشاء حملة إعلانية</CardTitle>
+              <CardDescription>حملات Facebook و Instagram الاحترافية</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               {!generatedContent && (
-                <div className="text-center py-8 text-yellow-600 bg-yellow-50 rounded-xl">
-                  يرجى توليد المحتوى أولاً من تبويب "المحتوى" لإنشاء حملة
+                <div className="p-4 bg-yellow-50 rounded-xl text-yellow-700 mb-4">
+                  يرجى توليد المحتوى أولاً قبل إنشاء الحملة
                 </div>
               )}
 
-              {showCampaignForm && (
-                <div className="mb-6 p-6 bg-gray-50 rounded-xl space-y-4">
-                  <h3 className="font-bold text-lg">إعدادات الحملة</h3>
-                  
-                  <div>
-                    <Label>اسم الحملة</Label>
-                    <Input
-                      value={campaignForm.name}
-                      onChange={(e) => setCampaignForm({...campaignForm, name: e.target.value})}
-                      placeholder="مثال: حملة تنظيف الكنب - يناير"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label>هدف الحملة</Label>
-                      <Select 
-                        value={campaignForm.objective} 
-                        onValueChange={(v) => setCampaignForm({...campaignForm, objective: v})}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {campaignObjectives.map(obj => (
-                            <SelectItem key={obj.id} value={obj.id}>
-                              {obj.name}
-                              <span className="text-xs text-gray-500 mr-2">({obj.budget})</span>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label>المنصة</Label>
-                      <Select 
-                        value={campaignForm.platform} 
-                        onValueChange={(v) => setCampaignForm({...campaignForm, platform: v})}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="facebook">فيسبوك</SelectItem>
-                          <SelectItem value="instagram">انستغرام</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label>المدة (أيام)</Label>
-                      <Input
-                        type="number"
-                        value={campaignForm.duration}
-                        onChange={(e) => setCampaignForm({...campaignForm, duration: Number(e.target.value)})}
-                        min={1}
-                        max={30}
-                      />
-                    </div>
-
-                    <div>
-                      <Label>الميزانية اليومية (درهم)</Label>
-                      <Input
-                        type="number"
-                        value={campaignForm.budget}
-                        onChange={(e) => setCampaignForm({...campaignForm, budget: e.target.value})}
-                        placeholder="مثال: 100"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label>الجمهور المستهدف</Label>
-                    <Select 
-                      value={campaignForm.audience} 
-                      onValueChange={(v) => setCampaignForm({...campaignForm, audience: v})}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {targetAudiences.map(aud => (
-                          <SelectItem key={aud.id} value={aud.id}>
-                            {aud.name}
-                            <span className="text-xs text-gray-500 mr-2">({aud.age})</span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="p-3 bg-blue-50 rounded-lg">
-                    <p className="text-sm text-blue-700">
-                      💰 الميزانية المقترحة: {suggestBudget(campaignForm.objective, campaignForm.duration)}
-                    </p>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button 
-                      onClick={createCampaign}
-                      disabled={isGenerating || !campaignForm.budget}
-                      className="flex-1 bg-purple-600 hover:bg-purple-700"
-                    >
-                      {isGenerating ? <Loader2 className="h-4 w-4 animate-spin ml-2" /> : <Send className="h-4 w-4 ml-2" />}
-                      إطلاق الحملة
-                    </Button>
-                    <Button variant="outline" onClick={() => setShowCampaignForm(false)}>
-                      إلغاء
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              <div className="space-y-4">
-                {campaigns.length === 0 ? (
-                  <div className="text-center py-12 text-gray-500">
-                    <Send className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                    <p>لا توجد حملات إعلانية بعد</p>
-                  </div>
-                ) : (
-                  campaigns.map(campaign => (
-                    <Card key={campaign.id} className="border-2 border-purple-100">
-                      <CardContent className="p-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div>
-                            <h3 className="font-bold text-lg">{campaign.name}</h3>
-                            <div className="flex gap-2 mt-2">
-                              <Badge className="bg-blue-100 text-blue-700">
-                                {campaign.platform === 'facebook' ? 'فيسبوك' : 'انستغرام'}
-                              </Badge>
-                              <Badge className="bg-green-100 text-green-700">{campaign.status}</Badge>
-                              <Badge variant="outline">{campaign.duration} أيام</Badge>
-                            </div>
+              <div>
+                <Label>هدف الحملة</Label>
+                <Select value={campaignForm.objective} onValueChange={(v) => setCampaignForm({...campaignForm, objective: v})}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {campaignObjectives.map(o => {
+                      const Icon = o.icon;
+                      return (
+                        <SelectItem key={o.id} value={o.id}>
+                          <div className="flex items-center gap-2">
+                            <Icon className="h-4 w-4" />
+                            <span>{o.name}</span>
+                            <span className="text-xs text-gray-500">({o.budget} درهم)</span>
                           </div>
-                          <div className="text-left">
-                            <p className="text-2xl font-bold text-purple-600">{campaign.budget} د.إ</p>
-                            <p className="text-xs text-gray-500">ميزانية يومية</p>
-                          </div>
-                        </div>
-
-                        {campaign.ad_details && (
-                          <div className="space-y-3">
-                            <div className="p-3 bg-purple-50 rounded-lg">
-                              <p className="text-xs text-purple-600 mb-1">عنوان الإعلان</p>
-                              <p className="font-medium">{campaign.ad_details.ad_title}</p>
-                            </div>
-                            
-                            <div className="p-3 bg-gray-50 rounded-lg">
-                              <p className="text-xs text-gray-600 mb-1">نص الإعلان</p>
-                              <p className="text-sm">{campaign.ad_details.ad_copy}</p>
-                            </div>
-
-                            <div className="grid grid-cols-3 gap-3">
-                              <div className="p-3 bg-blue-50 rounded-lg text-center">
-                                <p className="text-xs text-blue-600">المشاهدات</p>
-                                <p className="text-xl font-bold">{campaign.performance.impressions.toLocaleString()}</p>
-                              </div>
-                              <div className="p-3 bg-green-50 rounded-lg text-center">
-                                <p className="text-xs text-green-600">النقرات</p>
-                                <p className="text-xl font-bold">{campaign.performance.clicks}</p>
-                              </div>
-                              <div className="p-3 bg-orange-50 rounded-lg text-center">
-                                <p className="text-xs text-orange-600">التحويلات</p>
-                                <p className="text-xl font-bold">{campaign.performance.conversions}</p>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))
-                )}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
               </div>
+
+              <div>
+                <Label>الجمهور المستهدف</Label>
+                <Select value={campaignForm.audience} onValueChange={(v) => setCampaignForm({...campaignForm, audience: v})}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {targetAudiences.map(a => (
+                      <SelectItem key={a.id} value={a.id}>
+                        {a.name} ({a.age} سنة)
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>الميزانية (درهم)</Label>
+                  <Input
+                    type="number"
+                    value={campaignForm.budget}
+                    onChange={(e) => setCampaignForm({...campaignForm, budget: Number(e.target.value)})}
+                  />
+                </div>
+                <div>
+                  <Label>المدة (أيام)</Label>
+                  <Input
+                    type="number"
+                    value={campaignForm.duration}
+                    onChange={(e) => setCampaignForm({...campaignForm, duration: Number(e.target.value)})}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label className="mb-2 block">المنصات</Label>
+                <div className="flex gap-4">
+                  {['facebook', 'instagram'].map(p => (
+                    <div key={p} className="flex items-center gap-2">
+                      <Switch
+                        checked={campaignForm.platforms.includes(p)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setCampaignForm({...campaignForm, platforms: [...campaignForm.platforms, p]});
+                          } else {
+                            setCampaignForm({...campaignForm, platforms: campaignForm.platforms.filter(pl => pl !== p)});
+                          }
+                        }}
+                      />
+                      <Label className="capitalize">{p}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-800 font-medium mb-1">الميزانية المقترحة</p>
+                <p className="text-xs text-blue-600">
+                  {campaignObjectives.find(o => o.id === campaignForm.objective)?.budget} درهم للهدف المحدد
+                </p>
+                <p className="text-xs text-blue-600 mt-1">
+                  الميزانية اليومية: {Math.round(campaignForm.budget / campaignForm.duration)} درهم
+                </p>
+              </div>
+
+              <Button 
+                onClick={createCampaign} 
+                disabled={isGenerating || !generatedContent}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90"
+              >
+                {isGenerating ? (
+                  <><Loader2 className="h-4 w-4 ml-2 animate-spin" /> جاري الإنشاء...</>
+                ) : (
+                  <><Target className="h-4 w-4 ml-2" /> إنشاء الحملة</>
+                )}
+              </Button>
             </CardContent>
           </Card>
+
+          {/* Campaigns List */}
+          {campaigns.length > 0 && (
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle>الحملات المُنشأة ({campaigns.length})</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {campaigns.map((campaign) => (
+                  <div key={campaign.id} className="p-4 bg-gray-50 rounded-xl">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="font-bold text-lg">{campaign.ad_title}</h3>
+                        <p className="text-sm text-gray-600 mt-1">{campaign.ad_text}</p>
+                      </div>
+                      <Badge className="bg-yellow-100 text-yellow-700">{campaign.status}</Badge>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                      <div className="text-center p-2 bg-white rounded-lg">
+                        <p className="text-xs text-gray-500">الميزانية</p>
+                        <p className="font-bold text-purple-600">{campaign.budget} درهم</p>
+                      </div>
+                      <div className="text-center p-2 bg-white rounded-lg">
+                        <p className="text-xs text-gray-500">يومياً</p>
+                        <p className="font-bold">{campaign.daily_budget} درهم</p>
+                      </div>
+                      <div className="text-center p-2 bg-white rounded-lg">
+                        <p className="text-xs text-gray-500">CTR متوقع</p>
+                        <p className="font-bold text-green-600">{campaign.expected_ctr}%</p>
+                      </div>
+                      <div className="text-center p-2 bg-white rounded-lg">
+                        <p className="text-xs text-gray-500">عملاء متوقعين</p>
+                        <p className="font-bold text-blue-600">{campaign.expected_leads}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {campaign.keywords?.map((kw, idx) => (
+                        <Badge key={idx} variant="outline">{kw}</Badge>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <Badge className="bg-blue-100 text-blue-700">{campaign.cta}</Badge>
+                      <span>•</span>
+                      <span>{campaign.duration} أيام</span>
+                      <span>•</span>
+                      <span>{campaign.platforms.join(', ')}</span>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         {/* Schedule Tab */}
         <TabsContent value="schedule" className="space-y-6">
           <Card className="border-0 shadow-lg">
             <CardHeader>
-              <CardTitle>جدولة المنشورات</CardTitle>
-              <CardDescription>جدولة المحتوى للنشر التلقائي</CardDescription>
+              <CardTitle>جدولة المنشور</CardTitle>
+              <CardDescription>حدد التاريخ والوقت لنشر المحتوى تلقائياً</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {!generatedContent ? (
-                <div className="text-center py-8 text-yellow-600 bg-yellow-50 rounded-xl">
-                  يرجى توليد المحتوى أولاً لجدولته
-                </div>
-              ) : (
-                <div className="p-6 bg-gray-50 rounded-xl space-y-4">
-                  <h3 className="font-bold">جدولة منشور جديد</h3>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label>تاريخ النشر</Label>
-                      <Input
-                        type="date"
-                        min={format(new Date(), 'yyyy-MM-dd')}
-                        onChange={(e) => {
-                          const time = prompt('أدخل الوقت (مثال: 20:00):', '20:00');
-                          if (time) schedulePost(e.target.value, time);
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <Label>المنصة</Label>
-                      <Select value={contentForm.platform}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {platforms.map(p => (
-                            <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="p-3 bg-blue-50 rounded-lg">
-                    <p className="text-xs text-blue-600 mb-2">معاينة المحتوى</p>
-                    <p className="text-sm line-clamp-3">{generatedContent.post_text}</p>
-                  </div>
+              {!generatedContent && (
+                <div className="p-4 bg-yellow-50 rounded-xl text-yellow-700 mb-4">
+                  يرجى توليد المحتوى أولاً قبل الجدولة
                 </div>
               )}
 
-              <div className="space-y-3">
-                <h3 className="font-bold text-sm text-gray-700">المنشورات المجدولة ({scheduledPosts.length})</h3>
-                
-                {scheduledPosts.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <Clock className="h-10 w-10 mx-auto mb-3 text-gray-300" />
-                    <p className="text-sm">لا توجد منشورات مجدولة</p>
-                  </div>
-                ) : (
-                  scheduledPosts.map(post => (
-                    <div key={post.id} className="flex items-center gap-4 p-4 bg-white rounded-xl border">
-                      <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                        <Clock className="h-6 w-6 text-purple-600" />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>التاريخ</Label>
+                  <Input
+                    type="date"
+                    value={scheduleForm.date}
+                    onChange={(e) => setScheduleForm({...scheduleForm, date: e.target.value})}
+                    min={format(new Date(), 'yyyy-MM-dd')}
+                  />
+                </div>
+                <div>
+                  <Label>الوقت</Label>
+                  <Input
+                    type="time"
+                    value={scheduleForm.time}
+                    onChange={(e) => setScheduleForm({...scheduleForm, time: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>المنصة</Label>
+                <Select value={scheduleForm.platform} onValueChange={(v) => setScheduleForm({...scheduleForm, platform: v})}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {platforms.map(p => (
+                      <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {generatedContent && (
+                <div className="p-4 bg-gray-50 rounded-xl">
+                  <p className="text-sm text-gray-600 mb-2">المحتوى المجدول:</p>
+                  <p className="text-sm line-clamp-3">{generatedContent.post_text}</p>
+                </div>
+              )}
+
+              <Button 
+                onClick={schedulePost} 
+                disabled={!generatedContent || !scheduleForm.date}
+                className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:opacity-90"
+              >
+                <Clock className="h-4 w-4 ml-2" /> جدولة المنشور
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Scheduled Posts */}
+          {scheduledPosts.length > 0 && (
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle>المنشورات المجدولة ({scheduledPosts.length})</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {scheduledPosts.map((post) => {
+                  const PlatformIcon = getPlatformIcon(post.platform);
+                  return (
+                    <div key={post.id} className="p-4 bg-gray-50 rounded-xl flex items-start gap-4">
+                      <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center shrink-0">
+                        <PlatformIcon className="h-6 w-6 text-purple-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium">{platforms.find(p => p.id === post.platform)?.name}</p>
-                        <p className="text-sm text-gray-600 line-clamp-1">{post.content.post_text}</p>
-                      </div>
-                      <div className="text-left">
-                        <p className="text-sm font-medium">{format(new Date(post.scheduled_date), 'dd/MM/yyyy')}</p>
-                        <p className="text-xs text-gray-500">{post.scheduled_time}</p>
-                        <Badge className="bg-green-100 text-green-700 mt-1">{post.status}</Badge>
+                        <p className="text-sm text-gray-800 line-clamp-2">{post.content.post_text}</p>
+                        <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {format(new Date(post.date), 'dd MMM yyyy', { locale: ar })}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {post.time}
+                          </span>
+                          <Badge className="bg-green-100 text-green-700 text-xs">
+                            <CheckCircle className="h-3 w-3 ml-1" />
+                            {post.status}
+                          </Badge>
+                        </div>
                       </div>
                     </div>
-                  ))
-                )}
+                  );
+                })}
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        {/* Analytics Tab */}
+        <TabsContent value="analytics" className="space-y-6">
+          <Card className="border-0 shadow-lg">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>تحليلات الإعلانات</CardTitle>
+                  <CardDescription>متابعة أداء الحملات في الوقت الفعلي</CardDescription>
+                </div>
+                <Button onClick={fetchAdAnalytics} disabled={isGenerating} variant="outline">
+                  <RefreshCw className={`h-4 w-4 ml-2 ${isGenerating ? 'animate-spin' : ''}`} />
+                  تحديث
+                </Button>
               </div>
+            </CardHeader>
+            <CardContent>
+              {!adAnalytics ? (
+                <div className="text-center py-12">
+                  <BarChart3 className="h-16 w-16 mx-auto text-gray-300 mb-4" />
+                  <p className="text-gray-500 mb-4">اضغط على "تحديث" لجلب تحليلات الإعلانات</p>
+                  <Button onClick={fetchAdAnalytics} className="bg-purple-600 hover:bg-purple-700">
+                    <RefreshCw className="h-4 w-4 ml-2" />
+                    جلب التحليلات
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <Card className="border-0 shadow-md bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+                      <CardContent className="p-4 text-center">
+                        <Eye className="h-8 w-8 mx-auto mb-2 opacity-80" />
+                        <p className="text-2xl font-bold">{adAnalytics.impressions.toLocaleString()}</p>
+                        <p className="text-xs opacity-80">مرات الظهور</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border-0 shadow-md bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+                      <CardContent className="p-4 text-center">
+                        <MousePointer className="h-8 w-8 mx-auto mb-2 opacity-80" />
+                        <p className="text-2xl font-bold">{adAnalytics.clicks.toLocaleString()}</p>
+                        <p className="text-xs opacity-80">النقرات</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border-0 shadow-md bg-gradient-to-br from-green-500 to-green-600 text-white">
+                      <CardContent className="p-4 text-center">
+                        <TrendingUp className="h-8 w-8 mx-auto mb-2 opacity-80" />
+                        <p className="text-2xl font-bold">{adAnalytics.ctr}%</p>
+                        <p className="text-xs opacity-80">معدل النقر CTR</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border-0 shadow-md bg-gradient-to-br from-orange-500 to-orange-600 text-white">
+                      <CardContent className="p-4 text-center">
+                        <Users className="h-8 w-8 mx-auto mb-2 opacity-80" />
+                        <p className="text-2xl font-bold">{adAnalytics.conversions}</p>
+                        <p className="text-xs opacity-80">التحويلات</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="p-4 bg-gray-50 rounded-xl">
+                      <p className="text-sm text-gray-500 mb-1">التكلفة الإجمالية</p>
+                      <p className="text-2xl font-bold text-purple-600">{adAnalytics.cost} درهم</p>
+                    </div>
+                    <div className="p-4 bg-gray-50 rounded-xl">
+                      <p className="text-sm text-gray-500 mb-1">تكلفة النقرة CPC</p>
+                      <p className="text-2xl font-bold text-blue-600">{adAnalytics.cpc} درهم</p>
+                    </div>
+                    <div className="p-4 bg-gray-50 rounded-xl">
+                      <p className="text-sm text-gray-500 mb-1">عائد الاستثمار ROAS</p>
+                      <p className="text-2xl font-bold text-green-600">{adAnalytics.roas}x</p>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-blue-50 rounded-xl">
+                    <p className="text-sm text-blue-800 font-medium mb-2">📊 ملخص الأداء</p>
+                    <ul className="text-sm text-blue-700 space-y-1">
+                      <li>• معدل نقر ممتاز ({adAnalytics.ctr}% أعلى من المتوسط)</li>
+                      <li>• تكلفة النقرة ({adAnalytics.cpc} درهم) ضمن المعدل المقبول</li>
+                      <li>• عائد استثمار إيجابي ({adAnalytics.roas}x من كل درهم مستثمر)</li>
+                      <li>• {adAnalytics.conversions} عميل محتمل تم جذبهم</li>
+                    </ul>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
