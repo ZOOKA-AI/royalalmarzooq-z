@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -350,29 +349,29 @@ ${contentForm.customTopic ? `موضوع إضافي: ${contentForm.customTopic}` 
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="generate" className="flex items-center gap-1">
+          <TabsTrigger value="generate">
             <Wand2 className="h-4 w-4" />
-            <span className="hidden sm:inline">محتوى</span>
+            <span className="hidden sm:inline ml-1">محتوى</span>
           </TabsTrigger>
-          <TabsTrigger value="image" className="flex items-center gap-1">
+          <TabsTrigger value="image">
             <ImageIcon className="h-4 w-4" />
-            <span className="hidden sm:inline">صور</span>
+            <span className="hidden sm:inline ml-1">صور</span>
           </TabsTrigger>
-          <TabsTrigger value="campaign" className="flex items-center gap-1">
+          <TabsTrigger value="campaign">
             <Target className="h-4 w-4" />
-            <span className="hidden sm:inline">حملات</span>
+            <span className="hidden sm:inline ml-1">حملات</span>
           </TabsTrigger>
-          <TabsTrigger value="schedule" className="flex items-center gap-1">
+          <TabsTrigger value="schedule">
             <Clock className="h-4 w-4" />
-            <span className="hidden sm:inline">جدولة</span>
+            <span className="hidden sm:inline ml-1">جدولة</span>
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="flex items-center gap-1">
+          <TabsTrigger value="analytics">
             <BarChart3 className="h-4 w-4" />
-            <span className="hidden sm:inline">تحليلات</span>
+            <span className="hidden sm:inline ml-1">تحليلات</span>
           </TabsTrigger>
-          <TabsTrigger value="plan" className="flex items-center gap-1">
+          <TabsTrigger value="plan">
             <Calendar className="h-4 w-4" />
-            <span className="hidden sm:inline">خطة</span>
+            <span className="hidden sm:inline ml-1">خطة</span>
           </TabsTrigger>
         </TabsList>
 
@@ -599,7 +598,10 @@ ${contentForm.customTopic ? `موضوع إضافي: ${contentForm.customTopic}` 
                   <SelectContent>
                     {targetAudiences.map(a => (
                       <SelectItem key={a.id} value={a.id}>
-                        {a.name} ({a.age} سنة)
+                        <div>
+                          <p>{a.name} ({a.age} سنة)</p>
+                          <p className="text-xs text-gray-500">{a.interests}</p>
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -647,12 +649,12 @@ ${contentForm.customTopic ? `موضوع إضافي: ${contentForm.customTopic}` 
               </div>
 
               <div className="p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-800 font-medium mb-1">الميزانية المقترحة</p>
+                <p className="text-sm text-blue-800 font-medium mb-1">💰 الميزانية المقترحة</p>
                 <p className="text-xs text-blue-600">
                   {campaignObjectives.find(o => o.id === campaignForm.objective)?.budget} درهم للهدف المحدد
                 </p>
                 <p className="text-xs text-blue-600 mt-1">
-                  الميزانية اليومية: {Math.round(campaignForm.budget / campaignForm.duration)} درهم
+                  📊 الميزانية اليومية: {Math.round(campaignForm.budget / campaignForm.duration)} درهم
                 </p>
               </div>
 
