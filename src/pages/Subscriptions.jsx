@@ -19,6 +19,18 @@ export default function Subscriptions() {
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Check for success/cancel in URL
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true') {
+      toast.success('🎉 تم الاشتراك بنجاح! ستصلك رسالة تأكيد قريباً');
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (params.get('canceled') === 'true') {
+      toast.info('تم إلغاء عملية الاشتراك');
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
+
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me(),
@@ -46,32 +58,37 @@ export default function Subscriptions() {
       return;
     }
 
+    // Check if running in iframe (preview mode)
+    if (window !== window.top) {
+      toast.error('⚠️ الدفع يعمل فقط في التطبيق المنشور. يرجى نشر التطبيق والدخول من الرابط المباشر.');
+      return;
+    }
+
     setIsProcessing(true);
     try {
-      // في التطبيق الحقيقي، هنا نستدعي Stripe Checkout
-      toast.info('🚧 قريباً: سيتم توجيهك لصفحة الدفع الآمن');
-      
-      // مثال على إنشاء اشتراك تجريبي
-      const amount = billingCycle === 'monthly' ? plan.price_monthly : plan.price_yearly;
-      const startDate = new Date();
-      const endDate = billingCycle === 'monthly' 
-        ? addMonths(startDate, 1)
-        : addYears(startDate, 1);
+      const priceId = billingCycle === 'monthly' 
+        ? plan.stripe_price_id_monthly 
+        : plan.stripe_price_id_yearly;
 
-      await base44.entities.Subscription.create({
-        user_email: user.email,
-        plan_id: plan.id,
-        plan_name: plan.name,
-        status: 'active',
-        billing_cycle: billingCycle,
-        amount: amount,
-        start_date: format(startDate, 'yyyy-MM-dd'),
-        end_date: format(endDate, 'yyyy-MM-dd'),
-        next_billing_date: format(endDate, 'yyyy-MM-dd'),
+      if (!priceId) {
+        toast.error('هذه الباقة غير متاحة حالياً');
+        return;
+      }
+
+      const response = await base44.functions.invoke('createCheckout', {
+        priceId,
+        planId: plan.id,
+        planName: plan.name,
+        billingCycle
       });
 
-      toast.success('تم الاشتراك بنجاح! 🎉');
+      if (response.data?.url) {
+        window.location.href = response.data.url;
+      } else {
+        toast.error('حدث خطأ في إنشاء جلسة الدفع');
+      }
     } catch (error) {
+      console.error('Subscription error:', error);
       toast.error('حدث خطأ في عملية الاشتراك');
     } finally {
       setIsProcessing(false);
@@ -79,16 +96,26 @@ export default function Subscriptions() {
   };
 
   const handleCancelSubscription = async () => {
-    if (!activeSubscription) return;
+    if (!activeSubscription?.stripe_subscription_id) return;
 
+    const confirmed = window.confirm('هل أنت متأكد من إلغاء الاشتراك؟ سيستمر حتى نهاية الفترة المدفوعة.');
+    if (!confirmed) return;
+
+    setIsProcessing(true);
     try {
-      await base44.entities.Subscription.update(activeSubscription.id, {
-        cancel_at_period_end: true,
-        status: 'canceled'
+      await base44.functions.invoke('cancelSubscription', {
+        subscriptionId: activeSubscription.stripe_subscription_id
       });
-      toast.success('تم إلغاء الاشتراك');
+      
+      await base44.entities.Subscription.update(activeSubscription.id, {
+        cancel_at_period_end: true
+      });
+      
+      toast.success('تم إلغاء الاشتراك. سيستمر حتى ' + format(new Date(activeSubscription.next_billing_date), 'dd MMMM yyyy', { locale: ar }));
     } catch (error) {
       toast.error('حدث خطأ في إلغاء الاشتراك');
+    } finally {
+      setIsProcessing(false);
     }
   };
 

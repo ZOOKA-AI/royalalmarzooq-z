@@ -56,8 +56,9 @@ const navItems = [
   { name: 'الفواتير', page: 'Invoices', icon: FileText },
   { name: 'عروض الأسعار', page: 'SmartQuote', icon: Calculator },
   { name: 'مفاتيح API', page: 'APIKeys', icon: Key },
+  { name: 'الاشتراكات', page: 'Subscriptions', icon: Crown },
   { name: 'الإعدادات', page: 'Settings', icon: Settings },
-];
+  ];
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
