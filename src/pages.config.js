@@ -34,6 +34,7 @@ import VideoCreator from './pages/VideoCreator';
 import WorkerApp from './pages/WorkerApp';
 import Workers from './pages/Workers';
 import MarketingAutomation from './pages/MarketingAutomation';
+import ComprehensiveReports from './pages/ComprehensiveReports';
 import __Layout from './Layout.jsx';
 
 
@@ -74,6 +75,7 @@ export const PAGES = {
     "WorkerApp": WorkerApp,
     "Workers": Workers,
     "MarketingAutomation": MarketingAutomation,
+    "ComprehensiveReports": ComprehensiveReports,
 }
 
 export const pagesConfig = {
