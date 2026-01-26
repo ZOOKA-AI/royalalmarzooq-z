@@ -57,6 +57,7 @@ const navItems = [
   { name: 'عروض الأسعار', page: 'SmartQuote', icon: Calculator },
   { name: 'مفاتيح API', page: 'APIKeys', icon: Key },
   { name: 'الاشتراكات', page: 'Subscriptions', icon: Crown },
+  { name: 'التسويق الذكي', page: 'MarketingAutomation', icon: Sparkles },
   { name: 'الإعدادات', page: 'Settings', icon: Settings },
   ];
 

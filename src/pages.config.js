@@ -28,11 +28,12 @@ import SmartChat from './pages/SmartChat';
 import SmartQuote from './pages/SmartQuote';
 import SocialMediaGenerator from './pages/SocialMediaGenerator';
 import StoreDashboard from './pages/StoreDashboard';
+import Subscriptions from './pages/Subscriptions';
 import Terms from './pages/Terms';
 import VideoCreator from './pages/VideoCreator';
 import WorkerApp from './pages/WorkerApp';
 import Workers from './pages/Workers';
-import Subscriptions from './pages/Subscriptions';
+import MarketingAutomation from './pages/MarketingAutomation';
 import __Layout from './Layout.jsx';
 
 
@@ -67,11 +68,12 @@ export const PAGES = {
     "SmartQuote": SmartQuote,
     "SocialMediaGenerator": SocialMediaGenerator,
     "StoreDashboard": StoreDashboard,
+    "Subscriptions": Subscriptions,
     "Terms": Terms,
     "VideoCreator": VideoCreator,
     "WorkerApp": WorkerApp,
     "Workers": Workers,
-    "Subscriptions": Subscriptions,
+    "MarketingAutomation": MarketingAutomation,
 }
 
 export const pagesConfig = {
