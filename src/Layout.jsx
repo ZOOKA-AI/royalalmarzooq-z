@@ -11,19 +11,57 @@ import {
   Menu,
   X,
   LogOut,
-  Sparkles
+  Sparkles,
+  FileText,
+  Wand2,
+  Bot,
+  CreditCard,
+  Calculator,
+  MapPin,
+  Calendar,
+  BarChart3,
+  Crown,
+  Radio,
+  MessageSquare,
+  Key,
+  Shield
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { base44 } from '@/api/base44Client';
+import AIAssistantChat from './components/dashboard/AIAssistantChat';
+import SEOHead from './components/SEOHead';
 
 const navItems = [
   { name: 'الرئيسية', page: 'Dashboard', icon: LayoutDashboard },
+  { name: 'لوحة المتجر', page: 'StoreDashboard', icon: LayoutDashboard },
   { name: 'الطلبات', page: 'Orders', icon: ClipboardList },
   { name: 'العملاء', page: 'Clients', icon: Users },
   { name: 'العمال', page: 'Workers', icon: UserCog },
+  { name: 'الموظفين', page: 'Employees', icon: Users },
   { name: 'الخدمات', page: 'Services', icon: Wrench },
+  { name: 'التقارير المتقدمة', page: 'AdvancedReports', icon: FileText },
+  { name: 'التقارير الشاملة', page: 'ComprehensiveReports', icon: BarChart3 },
+  { name: 'برنامج الولاء', page: 'LoyaltyProgram', icon: Crown },
+  { name: 'الحجز أونلاين', page: 'OnlineBookingPublic', icon: Calendar },
+  { name: 'تطبيق العمال', page: 'WorkerApp', icon: UserCog },
+  { name: 'مولد صور وأفكار', page: 'SocialMediaGenerator', icon: Sparkles },
+  { name: 'الوكيل', page: 'AIAgent', icon: Bot },
+  { name: 'راديو', page: 'Radio', icon: Radio },
+  { name: 'المحادثة الذكية', page: 'SmartChat', icon: MessageSquare },
+  { name: 'مولد المحتوى', page: 'ContentGenerator', icon: Wand2 },
+  { name: 'تقارير العملاء', page: 'ClientReports', icon: FileText },
+  { name: 'محسن SEO', page: 'SEOOptimizer', icon: Bot },
+  { name: 'مولد فيديوهات', page: 'VideoCreator', icon: Bot },
+  { name: 'النشر التلقائي', page: 'AutoPoster', icon: Bot },
+  { name: 'التتبع المباشر', page: 'LiveTracking', icon: MapPin },
+  { name: 'بوابة الدفع', page: 'PaymentGateway', icon: CreditCard },
+  { name: 'الفواتير', page: 'Invoices', icon: FileText },
+  { name: 'عروض الأسعار', page: 'SmartQuote', icon: Calculator },
+  { name: 'مفاتيح API', page: 'APIKeys', icon: Key },
+  { name: 'الاشتراكات', page: 'Subscriptions', icon: Crown },
+  { name: 'التسويق الذكي', page: 'MarketingAutomation', icon: Sparkles },
   { name: 'الإعدادات', page: 'Settings', icon: Settings },
-];
+  ];
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -33,7 +71,9 @@ export default function Layout({ children, currentPageName }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50" dir="rtl">
+    <>
+      <SEOHead pageName={currentPageName} />
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50" dir="rtl">
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 right-0 left-0 bg-white border-b border-purple-100 z-50 px-4 py-3 flex items-center justify-between shadow-sm">
         <Button 
@@ -46,7 +86,7 @@ export default function Layout({ children, currentPageName }) {
         </Button>
         <div className="flex items-center gap-2">
           <Sparkles className="h-6 w-6 text-purple-600" />
-          <span className="font-bold text-purple-600">Royal Clean</span>
+          <span className="font-bold text-purple-600">شركة رويال</span>
         </div>
         <div className="w-10" />
       </div>
@@ -73,8 +113,8 @@ export default function Layout({ children, currentPageName }) {
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="font-bold text-xl text-gray-800">Royal Clean</h1>
-                <p className="text-xs text-gray-500">مركز العمليات</p>
+                <h1 className="font-bold text-xl text-gray-800">شركة رويال</h1>
+                <p className="text-xs text-gray-500">للتنظيف والتعقيم ومكافحة الحشرات</p>
               </div>
             </div>
             <Button 
@@ -130,6 +170,19 @@ export default function Layout({ children, currentPageName }) {
           {children}
         </div>
       </main>
+
+      {/* AI Assistant - يظهر في جميع الصفحات */}
+      <AIAssistantChat />
+
+      {/* CSS Animation for bounce */}
+      <style>{`
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+          40% { transform: translateY(-10px); }
+          60% { transform: translateY(-5px); }
+        }
+      `}</style>
     </div>
+    </>
   );
 }
