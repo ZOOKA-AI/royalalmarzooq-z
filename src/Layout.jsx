@@ -19,7 +19,6 @@ import {
   Calculator,
   MapPin,
   Calendar,
-  BarChart3,
   Crown,
   Radio,
   MessageSquare,
@@ -40,7 +39,6 @@ const navItems = [
   { name: 'الموظفين', page: 'Employees', icon: Users },
   { name: 'الخدمات', page: 'Services', icon: Wrench },
   { name: 'التقارير المتقدمة', page: 'AdvancedReports', icon: FileText },
-  { name: 'التقارير الشاملة', page: 'ComprehensiveReports', icon: BarChart3 },
   { name: 'برنامج الولاء', page: 'LoyaltyProgram', icon: Crown },
   { name: 'الحجز أونلاين', page: 'OnlineBookingPublic', icon: Calendar },
   { name: 'تطبيق العمال', page: 'WorkerApp', icon: UserCog },
@@ -59,7 +57,6 @@ const navItems = [
   { name: 'عروض الأسعار', page: 'SmartQuote', icon: Calculator },
   { name: 'مفاتيح API', page: 'APIKeys', icon: Key },
   { name: 'الاشتراكات', page: 'Subscriptions', icon: Crown },
-  { name: 'التسويق الذكي', page: 'MarketingAutomation', icon: Sparkles },
   { name: 'الإعدادات', page: 'Settings', icon: Settings },
   ];
 
