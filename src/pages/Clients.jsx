@@ -2,34 +2,19 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { 
-  Plus, Search, Edit, Trash2, Phone, MapPin, Eye, 
-  Star, Crown, Building, RefreshCw, UserPlus
+  Plus, Search, Phone, MapPin, Mail, Edit, Trash2, Eye, X
 } from 'lucide-react';
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,81 +27,39 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import ClientHistory from '../components/clients/ClientHistory';
-
-const categoryColors = {
-  'عادي': 'bg-gray-100 text-gray-700',
-  'VIP': 'bg-yellow-100 text-yellow-700',
-  'محتمل': 'bg-blue-100 text-blue-700',
-  'شركة': 'bg-purple-100 text-purple-700',
-  'متكرر': 'bg-green-100 text-green-700',
-};
-
-const categoryIcons = {
-  'عادي': Star,
-  'VIP': Crown,
-  'محتمل': UserPlus,
-  'شركة': Building,
-  'متكرر': RefreshCw,
-};
-
-const categories = ['عادي', 'VIP', 'محتمل', 'شركة', 'متكرر'];
-const buildingTypes = ['شقة', 'فيلا', 'مكتب', 'محل', 'مبنى'];
-const sources = ['واتساب', 'اتصال', 'موقع', 'إحالة', 'إعلان', 'آخر'];
-const preferredTimes = ['صباحاً', 'ظهراً', 'مساءً', 'أي وقت'];
 
 export default function Clients() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
   const [showForm, setShowForm] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
-  const [viewingClient, setViewingClient] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-
-  const initialFormData = {
-    name: '', phone: '', whatsapp: '', email: '', address: '', area: '', notes: '',
-    category: 'عادي', building_type: '', source: '', preferred_time: ''
-  };
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState({
+    name: '', phone: '', whatsapp: '', email: '', address: '', area: '', notes: ''
+  });
 
   const queryClient = useQueryClient();
 
   const { data: clients = [], isLoading } = useQuery({
     queryKey: ['clients'],
     queryFn: () => base44.entities.Client.list('-created_date'),
-    staleTime: 60000, // 1 minute cache
-    cacheTime: 300000, // 5 minutes
   });
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Client.create(data),
-    onSuccess: (newClient) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       resetForm();
-      toast.success('✅ تم إضافة العميل بنجاح!', {
-        description: `${newClient.name} - ${newClient.phone}`,
-        duration: 3000
-      });
+      toast.success('تم إضافة العميل بنجاح');
     },
-    onError: () => {
-      toast.error('❌ فشل إضافة العميل', {
-        description: 'تحقق من البيانات وحاول مرة أخرى'
-      });
-    }
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Client.update(id, data),
-    onSuccess: (updated) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       resetForm();
-      toast.success('✅ تم تحديث العميل بنجاح!', {
-        description: updated.name
-      });
+      toast.success('تم تحديث العميل بنجاح');
     },
-    onError: () => {
-      toast.error('❌ فشل تحديث العميل');
-    }
   });
 
   const deleteMutation = useMutation({
@@ -124,15 +67,12 @@ export default function Clients() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       setDeleteId(null);
-      toast.success('🗑️ تم حذف العميل بنجاح');
+      toast.success('تم حذف العميل بنجاح');
     },
-    onError: () => {
-      toast.error('❌ فشل حذف العميل');
-    }
   });
 
   const resetForm = () => {
-    setFormData(initialFormData);
+    setFormData({ name: '', phone: '', whatsapp: '', email: '', address: '', area: '', notes: '' });
     setEditingClient(null);
     setShowForm(false);
   };
@@ -147,10 +87,6 @@ export default function Clients() {
       address: client.address || '',
       area: client.area || '',
       notes: client.notes || '',
-      category: client.category || 'عادي',
-      building_type: client.building_type || '',
-      source: client.source || '',
-      preferred_time: client.preferred_time || '',
     });
     setShowForm(true);
   };
@@ -164,21 +100,18 @@ export default function Clients() {
     }
   };
 
-  const filteredClients = clients.filter(c => {
-    const matchesSearch = 
-      c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.phone?.includes(searchTerm) ||
-      c.area?.includes(searchTerm);
-    const matchesCategory = categoryFilter === 'all' || c.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredClients = clients.filter(c => 
+    c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.phone?.includes(searchTerm) ||
+    c.area?.includes(searchTerm)
+  );
 
   if (isLoading) {
     return (
       <div className="space-y-6">
         <Skeleton className="h-12 w-full" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map(i => <Skeleton key={i} className="h-40 rounded-xl" />)}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map(i => <Skeleton key={i} className="h-48" />)}
         </div>
       </div>
     );
@@ -197,88 +130,44 @@ export default function Clients() {
           className="bg-purple-600 hover:bg-purple-700"
         >
           <Plus className="h-4 w-4 ml-2" />
-          عميل جديد
+          إضافة عميل
         </Button>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-          <Input
-            placeholder="ابحث بالاسم أو الهاتف أو المنطقة..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pr-10"
-          />
-        </div>
-        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-full sm:w-40">
-            <SelectValue placeholder="التصنيف" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">الكل</SelectItem>
-            {categories.map(c => (
-              <SelectItem key={c} value={c}>{c}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+        <Input
+          placeholder="ابحث بالاسم أو الهاتف أو المنطقة..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pr-10"
+        />
       </div>
 
       {/* Clients Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredClients.length === 0 ? (
           <div className="col-span-full text-center py-12 text-gray-500">
             لا يوجد عملاء
           </div>
         ) : (
-          filteredClients.map(client => {
-            const CategoryIcon = categoryIcons[client.category] || Star;
-            return (
-              <Card key={client.id} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                        <span className="text-purple-600 font-bold text-lg">
-                          {client.name?.charAt(0) || '؟'}
-                        </span>
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-gray-800">{client.name}</h3>
-                        <div className="flex items-center gap-2">
-                          <Badge className={categoryColors[client.category || 'عادي']}>
-                            <CategoryIcon className="h-3 w-3 ml-1" />
-                            {client.category || 'عادي'}
-                          </Badge>
-                        </div>
-                      </div>
+          filteredClients.map(client => (
+            <Card key={client.id} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                      <span className="text-purple-600 font-bold text-lg">
+                        {client.name?.charAt(0)}
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-800">{client.name}</h3>
+                      <p className="text-sm text-gray-500">{client.area}</p>
                     </div>
                   </div>
-
-                  <div className="space-y-2 text-sm text-gray-600 mb-4">
-                    <p className="flex items-center gap-2">
-                      <Phone className="h-4 w-4" />
-                      <span dir="ltr">{client.phone}</span>
-                    </p>
-                    {client.area && (
-                      <p className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4" />
-                        {client.area}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="flex gap-2 border-t pt-3">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="flex-1"
-                      onClick={() => setViewingClient(client)}
-                    >
-                      <Eye className="h-4 w-4 ml-1" />
-                      السجل
-                    </Button>
+                  <div className="flex gap-1">
                     <Button variant="ghost" size="icon" onClick={() => handleEdit(client)}>
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -286,30 +175,40 @@ export default function Clients() {
                       <Trash2 className="h-4 w-4 text-red-500" />
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
-            );
-          })
+                </div>
+                
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Phone className="h-4 w-4" />
+                    <span dir="ltr">{client.phone}</span>
+                  </div>
+                  {client.email && (
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Mail className="h-4 w-4" />
+                      <span>{client.email}</span>
+                    </div>
+                  )}
+                  {client.address && (
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <MapPin className="h-4 w-4" />
+                      <span>{client.address}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-4 pt-4 border-t flex justify-between text-sm">
+                  <span className="text-gray-500">الطلبات: {client.total_orders || 0}</span>
+                  <span className="text-purple-600 font-bold">{client.total_spent || 0} ر.س</span>
+                </div>
+              </CardContent>
+            </Card>
+          ))
         )}
       </div>
 
-      {/* Client History Sheet */}
-      <Sheet open={!!viewingClient} onOpenChange={() => setViewingClient(null)}>
-        <SheetContent side="left" className="w-full sm:max-w-lg overflow-y-auto" dir="rtl">
-          <SheetHeader>
-            <SheetTitle>سجل العميل: {viewingClient?.name}</SheetTitle>
-          </SheetHeader>
-          {viewingClient && (
-            <div className="mt-6">
-              <ClientHistory client={viewingClient} onClose={() => setViewingClient(null)} />
-            </div>
-          )}
-        </SheetContent>
-      </Sheet>
-
       {/* Add/Edit Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto" dir="rtl">
+        <DialogContent className="max-w-md" dir="rtl">
           <DialogHeader>
             <DialogTitle>{editingClient ? 'تعديل العميل' : 'إضافة عميل جديد'}</DialogTitle>
           </DialogHeader>
@@ -333,7 +232,7 @@ export default function Clients() {
                 />
               </div>
               <div>
-                <Label>واتساب</Label>
+                <Label>الواتساب</Label>
                 <Input
                   value={formData.whatsapp}
                   onChange={(e) => setFormData({...formData, whatsapp: e.target.value})}
@@ -347,70 +246,20 @@ export default function Clients() {
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
-                dir="ltr"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>المنطقة</Label>
-                <Input
-                  value={formData.area}
-                  onChange={(e) => setFormData({...formData, area: e.target.value})}
-                />
-              </div>
-              <div>
-                <Label>التصنيف</Label>
-                <Select value={formData.category} onValueChange={(v) => setFormData({...formData, category: v})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>نوع المبنى</Label>
-                <Select value={formData.building_type} onValueChange={(v) => setFormData({...formData, building_type: v})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {buildingTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>مصدر العميل</Label>
-                <Select value={formData.source} onValueChange={(v) => setFormData({...formData, source: v})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {sources.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
             <div>
-              <Label>الوقت المفضل</Label>
-              <Select value={formData.preferred_time} onValueChange={(v) => setFormData({...formData, preferred_time: v})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="اختر" />
-                </SelectTrigger>
-                <SelectContent>
-                  {preferredTimes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                </SelectContent>
-              </Select>
+              <Label>المنطقة</Label>
+              <Input
+                value={formData.area}
+                onChange={(e) => setFormData({...formData, area: e.target.value})}
+              />
             </div>
             <div>
               <Label>العنوان</Label>
               <Textarea
                 value={formData.address}
                 onChange={(e) => setFormData({...formData, address: e.target.value})}
-                rows={2}
               />
             </div>
             <div>
@@ -418,7 +267,6 @@ export default function Clients() {
               <Textarea
                 value={formData.notes}
                 onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                rows={2}
               />
             </div>
             <div className="flex gap-3 pt-4">
@@ -439,7 +287,7 @@ export default function Clients() {
           <AlertDialogHeader>
             <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
             <AlertDialogDescription>
-              هل أنت متأكد من حذف هذا العميل؟
+              هل أنت متأكد من حذف هذا العميل؟ لا يمكن التراجع عن هذا الإجراء.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex gap-3">
