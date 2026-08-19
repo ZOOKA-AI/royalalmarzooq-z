@@ -1,0 +1,93 @@
+{
+  "name": "Client",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "\u0627\u0633\u0645 \u0627\u0644\u0639\u0645\u064a\u0644"
+    },
+    "phone": {
+      "type": "string",
+      "description": "\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641"
+    },
+    "whatsapp": {
+      "type": "string",
+      "description": "\u0631\u0642\u0645 \u0627\u0644\u0648\u0627\u062a\u0633\u0627\u0628"
+    },
+    "email": {
+      "type": "string",
+      "description": "\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a"
+    },
+    "address": {
+      "type": "string",
+      "description": "\u0627\u0644\u0639\u0646\u0648\u0627\u0646"
+    },
+    "area": {
+      "type": "string",
+      "description": "\u0627\u0644\u0645\u0646\u0637\u0642\u0629"
+    },
+    "notes": {
+      "type": "string",
+      "description": "\u0645\u0644\u0627\u062d\u0638\u0627\u062a"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "\u0639\u0627\u062f\u064a",
+        "VIP",
+        "\u0645\u062d\u062a\u0645\u0644",
+        "\u0634\u0631\u0643\u0629",
+        "\u0645\u062a\u0643\u0631\u0631"
+      ],
+      "default": "\u0639\u0627\u062f\u064a",
+      "description": "\u062a\u0635\u0646\u064a\u0641 \u0627\u0644\u0639\u0645\u064a\u0644"
+    },
+    "building_type": {
+      "type": "string",
+      "enum": [
+        "\u0634\u0642\u0629",
+        "\u0641\u064a\u0644\u0627",
+        "\u0645\u0643\u062a\u0628",
+        "\u0645\u062d\u0644",
+        "\u0645\u0628\u0646\u0649"
+      ],
+      "description": "\u0646\u0648\u0639 \u0627\u0644\u0645\u0628\u0646\u0649"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "\u0648\u0627\u062a\u0633\u0627\u0628",
+        "\u0627\u062a\u0635\u0627\u0644",
+        "\u0645\u0648\u0642\u0639",
+        "\u0625\u062d\u0627\u0644\u0629",
+        "\u0625\u0639\u0644\u0627\u0646",
+        "\u0622\u062e\u0631"
+      ],
+      "description": "\u0645\u0635\u062f\u0631 \u0627\u0644\u0639\u0645\u064a\u0644"
+    },
+    "preferred_time": {
+      "type": "string",
+      "enum": [
+        "\u0635\u0628\u0627\u062d\u0627\u064b",
+        "\u0638\u0647\u0631\u0627\u064b",
+        "\u0645\u0633\u0627\u0621\u064b",
+        "\u0623\u064a \u0648\u0642\u062a"
+      ],
+      "description": "\u0627\u0644\u0648\u0642\u062a \u0627\u0644\u0645\u0641\u0636\u0644"
+    },
+    "total_orders": {
+      "type": "number",
+      "default": 0,
+      "description": "\u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u0637\u0644\u0628\u0627\u062a"
+    },
+    "total_spent": {
+      "type": "number",
+      "default": 0,
+      "description": "\u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u0645\u0635\u0631\u0648\u0641"
+    }
+  },
+  "required": [
+    "name",
+    "phone"
+  ]
+}

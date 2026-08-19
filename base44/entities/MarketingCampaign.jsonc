@@ -1,0 +1,106 @@
+{
+  "name": "MarketingCampaign",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "\u0627\u0633\u0645 \u0627\u0644\u062d\u0645\u0644\u0629"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "review_request",
+        "promotional",
+        "renewal_reminder",
+        "upgrade_offer",
+        "reactivation",
+        "seasonal"
+      ],
+      "description": "\u0646\u0648\u0639 \u0627\u0644\u062d\u0645\u0644\u0629"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "paused",
+        "completed",
+        "scheduled"
+      ],
+      "default": "active",
+      "description": "\u062d\u0627\u0644\u0629 \u0627\u0644\u062d\u0645\u0644\u0629"
+    },
+    "target_audience": {
+      "type": "string",
+      "enum": [
+        "all",
+        "inactive",
+        "vip",
+        "subscribers",
+        "new_customers",
+        "high_value"
+      ],
+      "description": "\u0627\u0644\u062c\u0645\u0647\u0648\u0631 \u0627\u0644\u0645\u0633\u062a\u0647\u062f\u0641"
+    },
+    "channel": {
+      "type": "string",
+      "enum": [
+        "email",
+        "sms",
+        "whatsapp",
+        "notification"
+      ],
+      "description": "\u0642\u0646\u0627\u0629 \u0627\u0644\u0625\u0631\u0633\u0627\u0644"
+    },
+    "message_template": {
+      "type": "string",
+      "description": "\u0642\u0627\u0644\u0628 \u0627\u0644\u0631\u0633\u0627\u0644\u0629"
+    },
+    "trigger_condition": {
+      "type": "string",
+      "description": "\u0634\u0631\u0637 \u0627\u0644\u062a\u0634\u063a\u064a\u0644 (JSON)"
+    },
+    "personalized": {
+      "type": "boolean",
+      "default": true,
+      "description": "\u0627\u0633\u062a\u062e\u062f\u0627\u0645 AI \u0644\u0644\u062a\u062e\u0635\u064a\u0635"
+    },
+    "discount_code": {
+      "type": "string",
+      "description": "\u0643\u0648\u062f \u0627\u0644\u062e\u0635\u0645"
+    },
+    "discount_value": {
+      "type": "number",
+      "description": "\u0642\u064a\u0645\u0629 \u0627\u0644\u062e\u0635\u0645"
+    },
+    "sent_count": {
+      "type": "number",
+      "default": 0,
+      "description": "\u0639\u062f\u062f \u0627\u0644\u0631\u0633\u0627\u0626\u0644 \u0627\u0644\u0645\u0631\u0633\u0644\u0629"
+    },
+    "open_rate": {
+      "type": "number",
+      "default": 0,
+      "description": "\u0645\u0639\u062f\u0644 \u0627\u0644\u0641\u062a\u062d %"
+    },
+    "conversion_rate": {
+      "type": "number",
+      "default": 0,
+      "description": "\u0645\u0639\u062f\u0644 \u0627\u0644\u062a\u062d\u0648\u064a\u0644 %"
+    },
+    "schedule_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "\u0645\u0648\u0639\u062f \u0627\u0644\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0645\u062c\u062f\u0648\u0644"
+    },
+    "last_run": {
+      "type": "string",
+      "format": "date-time",
+      "description": "\u0622\u062e\u0631 \u062a\u0634\u063a\u064a\u0644"
+    }
+  },
+  "required": [
+    "name",
+    "type",
+    "channel"
+  ]
+}

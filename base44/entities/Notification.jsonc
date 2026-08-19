@@ -1,0 +1,53 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "\u0645\u0639\u0631\u0641 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "\u0637\u0644\u0628_\u062c\u062f\u064a\u062f",
+        "\u062a\u062d\u062f\u064a\u062b_\u062d\u0627\u0644\u0629",
+        "\u0645\u0648\u0639\u062f_\u0642\u0627\u062f\u0645",
+        "\u062f\u0641\u0639_\u0645\u062a\u0623\u062e\u0631",
+        "\u062a\u0642\u064a\u064a\u0645"
+      ],
+      "description": "\u0646\u0648\u0639 \u0627\u0644\u0625\u0634\u0639\u0627\u0631"
+    },
+    "title": {
+      "type": "string",
+      "description": "\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0625\u0634\u0639\u0627\u0631"
+    },
+    "message": {
+      "type": "string",
+      "description": "\u0646\u0635 \u0627\u0644\u0625\u0634\u0639\u0627\u0631"
+    },
+    "link": {
+      "type": "string",
+      "description": "\u0631\u0627\u0628\u0637 \u0644\u0644\u0627\u0646\u062a\u0642\u0627\u0644"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false,
+      "description": "\u0645\u0642\u0631\u0648\u0621"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "\u0639\u0627\u062f\u064a",
+        "\u0645\u0647\u0645",
+        "\u0639\u0627\u062c\u0644"
+      ],
+      "default": "\u0639\u0627\u062f\u064a",
+      "description": "\u0627\u0644\u0623\u0648\u0644\u0648\u064a\u0629"
+    }
+  },
+  "required": [
+    "title",
+    "message",
+    "type"
+  ]
+}
