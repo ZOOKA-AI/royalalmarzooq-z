@@ -23,7 +23,8 @@ import {
   Radio,
   MessageSquare,
   Key,
-  Shield
+  Shield,
+  BookOpen
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { base44 } from '@/api/base44Client';
@@ -58,6 +59,7 @@ const navItems = [
   { name: 'مفاتيح API', page: 'APIKeys', icon: Key },
   { name: 'الاشتراكات', page: 'Subscriptions', icon: Crown },
   { name: 'الإعدادات', page: 'Settings', icon: Settings },
+  { name: 'الدليل والمميزات', page: 'Guide', icon: BookOpen },
   ];
 
 export default function Layout({ children, currentPageName }) {

@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import Guide from './pages/Guide';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -41,28 +42,45 @@ const AuthenticatedApp = () => {
     }
   }
 
-  // Render the main app
-  return (
-    <Routes>
-      <Route path="/" element={
-        <LayoutWrapper currentPageName={mainPageKey}>
-          <MainPage />
-        </LayoutWrapper>
-      } />
-      {Object.entries(Pages).map(([path, Page]) => (
-        <Route
-          key={path}
-          path={`/${path}`}
-          element={
-            <LayoutWrapper currentPageName={path}>
-              <Page />
-            </LayoutWrapper>
-          }
-        />
-      ))}
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
-  );
+    // Public pages that should not be wrapped in the dashboard Layout (legal pages)
+    const publicPages = ['Privacy', 'Terms'];
+
+    // Render the main app
+    return (
+      <Routes>
+        <Route path="/" element={
+          <LayoutWrapper currentPageName={mainPageKey}>
+            <MainPage />
+          </LayoutWrapper>
+        } />
+        {/* Public legal pages - rendered without dashboard sidebar for store compliance */}
+        {publicPages.map(path => {
+          const Page = Pages[path];
+          return Page ? (
+            <Route key={path} path={`/${path}`} element={<Page />} />
+          ) : null;
+        })}
+        <Route path="/Guide" element={
+          <LayoutWrapper currentPageName="Guide">
+            <Guide />
+          </LayoutWrapper>
+        } />
+        {Object.entries(Pages)
+          .filter(([path]) => !publicPages.includes(path))
+          .map(([path, Page]) => (
+          <Route
+            key={path}
+            path={`/${path}`}
+            element={
+              <LayoutWrapper currentPageName={path}>
+                <Page />
+              </LayoutWrapper>
+            }
+          />
+        ))}
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    );
 };
 
 
