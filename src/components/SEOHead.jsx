@@ -3,53 +3,53 @@ import { useLocation } from 'react-router-dom';
 
 const pageMetadata = {
   Dashboard: {
-    title: 'لوحة التحكم | رويال - نظام إدارة الأعمال بالذكاء الاصطناعي',
+    title: 'لوحة التحكم | Royal Haroon - نظام إدارة الأعمال بالذكاء الاصطناعي',
     description: 'لوحة تحكم ذكية لإدارة شركات التنظيف والصيانة بتقنيات AI متقدمة. تتبع الطلبات، العملاء، والإيرادات في الوقت الفعلي.',
     keywords: 'لوحة تحكم, إدارة أعمال, ذكاء اصطناعي, نظام إدارة, دبي'
   },
   Orders: {
-    title: 'إدارة الطلبات | رويال',
+    title: 'إدارة الطلبات | Royal Haroon',
     description: 'نظام متطور لإدارة طلبات التنظيف والصيانة. تتبع الحالة، الدفع، والعمال بكفاءة عالية.',
     keywords: 'إدارة طلبات, نظام حجز, تتبع طلبات, خدمات تنظيف'
   },
   Clients: {
-    title: 'إدارة العملاء | رويال',
+    title: 'إدارة العملاء | Royal Haroon',
     description: 'نظام CRM متكامل لإدارة بيانات العملاء، سجل الطلبات، وبرامج الولاء.',
     keywords: 'إدارة عملاء, CRM, برنامج ولاء, قاعدة بيانات عملاء'
   },
   Pricing: {
-    title: 'الأسعار والخطط | رويال - ابدأ مجاناً',
+    title: 'الأسعار والخطط | Royal Haroon - ابدأ مجاناً',
     description: 'خطط أسعار مرنة تناسب جميع الشركات. من المجاني إلى المؤسسات. بدون رسوم خفية.',
     keywords: 'أسعار, خطط اشتراك, تسعير, باقات, مجاني, اشتراك شهري'
   },
   About: {
-    title: 'من نحن | رويال - قصتنا ورؤيتنا',
-    description: 'تعرف على رويال - المنصة الرائدة في إدارة أعمال التنظيف بالذكاء الاصطناعي في الإمارات.',
-    keywords: 'من نحن, رويال, قصة الشركة, رؤية, مهمة, فريق العمل'
+    title: 'من نحن | Royal Haroon - قصتنا ورؤيتنا',
+    description: 'تعرف على Royal Haroon - المنصة الرائدة في إدارة أعمال التنظيف بالذكاء الاصطناعي في الإمارات.',
+    keywords: 'من نحن, Royal Haroon, قصة الشركة, رؤية, مهمة, فريق العمل'
   },
   Privacy: {
-    title: 'سياسة الخصوصية | رويال',
+    title: 'سياسة الخصوصية | Royal Haroon',
     description: 'نلتزم بحماية بياناتك. اقرأ سياسة الخصوصية الشاملة لفهم كيف نجمع ونحمي معلوماتك.',
     keywords: 'خصوصية, حماية البيانات, أمان, GDPR, تشفير'
   },
   Terms: {
-    title: 'شروط الاستخدام | رويال',
-    description: 'الشروط والأحكام القانونية لاستخدام منصة رويال. اقرأها بعناية قبل البدء.',
+    title: 'شروط الاستخدام | Royal Haroon',
+    description: 'الشروط والأحكام القانونية لاستخدام منصة Royal Haroon. اقرأها بعناية قبل البدء.',
     keywords: 'شروط استخدام, أحكام, اتفاقية, قانوني'
   },
   Blog: {
-    title: 'مدونة رويال | نصائح وأفكار لإدارة الأعمال',
+    title: 'مدونة Royal Haroon | نصائح وأفكار لإدارة الأعمال',
     description: 'مقالات متخصصة في إدارة أعمال التنظيف، التسويق، الذكاء الاصطناعي، وقصص النجاح.',
     keywords: 'مدونة, مقالات, نصائح إدارة, تسويق, ذكاء اصطناعي'
   },
   Landing: {
-    title: 'رويال | نظام إدارة الأعمال بالذكاء الاصطناعي - دبي، الإمارات',
+    title: 'Royal Haroon | نظام إدارة الأعمال بالذكاء الاصطناعي - دبي، الإمارات',
     description: 'منصة شاملة لإدارة شركات التنظيف والصيانة في الإمارات. AI متقدم، تتبع GPS، تقارير ذكية، وأكثر. ابدأ مجاناً!',
     keywords: 'نظام إدارة أعمال, ذكاء اصطناعي, شركات تنظيف, دبي, الإمارات, CRM, تتبع GPS, إدارة طلبات'
   },
   Licenses: {
-    title: 'التراخيص والشهادات | رويال',
-    description: 'جميع التراخيص الرسمية، الشهادات، وحقوق الملكية الفكرية لشركة رويال.',
+    title: 'التراخيص والشهادات | Royal Haroon',
+    description: 'جميع التراخيص الرسمية، الشهادات، وحقوق الملكية الفكرية لRoyal Haroon.',
     keywords: 'تراخيص, شهادات, ISO, حقوق نشر, ملكية فكرية'
   }
 };
@@ -59,7 +59,7 @@ export default function SEOHead({ pageName }) {
   
   useEffect(() => {
     const metadata = pageMetadata[pageName] || {
-      title: 'رويال | نظام إدارة الأعمال',
+      title: 'Royal Haroon | نظام إدارة الأعمال',
       description: 'منصة ذكية لإدارة أعمال التنظيف والصيانة',
       keywords: 'إدارة أعمال, ذكاء اصطناعي, دبي'
     };
@@ -91,7 +91,7 @@ export default function SEOHead({ pageName }) {
       { property: 'og:description', content: metadata.description },
       { property: 'og:type', content: 'website' },
       { property: 'og:url', content: window.location.href },
-      { property: 'og:site_name', content: 'رويال' },
+      { property: 'og:site_name', content: 'Royal Haroon' },
       { property: 'og:locale', content: 'ar_AE' },
       { property: 'og:image', content: 'https://royal-cleaning.com/og-image.jpg' }
     ];
@@ -141,7 +141,7 @@ export default function SEOHead({ pageName }) {
     const schemaData = {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      "name": "رويال",
+      "name": "Royal Haroon",
       "applicationCategory": "BusinessApplication",
       "operatingSystem": "Web",
       "offers": {

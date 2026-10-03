@@ -96,7 +96,7 @@ export default function ContentGenerator() {
     setIsGenerating(true);
     try {
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `أنت خبير تسويق رقمي لشركة رويال للتنظيف والتعقيم ومكافحة الحشرات في الإمارات.
+        prompt: `أنت خبير تسويق رقمي لRoyal Haroon للتنظيف والتعقيم في الإمارات.
 
 أنشئ محتوى لمنصة ${contentForm.platform} من نوع "${contentTypes.find(t => t.id === contentForm.type)?.name}".
 الخدمة المستهدفة: ${contentForm.service}
@@ -128,7 +128,7 @@ ${contentForm.customTopic ? `موضوع إضافي: ${contentForm.customTopic}` 
       const content = response || {};
       setGeneratedContent({
         post_text: content.post_text || 'محتوى تجريبي للمنشور',
-        hashtags: content.hashtags || ['#رويال_للتنظيف', '#تنظيف_الإمارات'],
+        hashtags: content.hashtags || ['#Royal Haroon_للتنظيف', '#تنظيف_الإمارات'],
         best_time: content.best_time || '8:00 مساءً',
         image_description: content.image_description || 'صورة احترافية لخدمات التنظيف',
         cta: content.cta || 'تواصل معنا الآن!'
@@ -166,7 +166,7 @@ ${contentForm.customTopic ? `موضوع إضافي: ${contentForm.customTopic}` 
     setIsGeneratingPlan(true);
     try {
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `أنت خبير تسويق رقمي. أنشئ خطة محتوى شهرية لشركة رويال للتنظيف في الإمارات.
+        prompt: `أنت خبير تسويق رقمي. أنشئ خطة محتوى شهرية لRoyal Haroon للتنظيف في الإمارات.
 
 أنشئ 30 منشور (منشور يومي) يتضمن:
 - تنويع بين المنصات (انستغرام، فيسبوك، تيك توك، X)

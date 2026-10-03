@@ -15,7 +15,7 @@ const articles = [
     excerpt: 'استكشف كيف تُحدث تقنيات AI ثورة في إدارة شركات التنظيف وتحسين الكفاءة التشغيلية بنسبة تصل إلى 300%.',
     category: 'ذكاء اصطناعي',
     date: '23 يناير 2026',
-    author: 'فريق رويال',
+    author: 'فريق Royal Haroon',
     readTime: '5 دقائق',
     image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&auto=format&fit=crop',
     featured: true
@@ -66,7 +66,7 @@ const articles = [
     excerpt: 'قصص نجاح ملهمة ونصائح عملية من شركات بدأت صغيرة ونمت لتصبح قادة السوق.',
     category: 'قصص نجاح',
     date: '10 يناير 2026',
-    author: 'فريق رويال',
+    author: 'فريق Royal Haroon',
     readTime: '10 دقائق',
     image: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&auto=format&fit=crop'
   }
@@ -98,7 +98,7 @@ export default function Blog() {
         >
           <Badge className="mb-4 bg-purple-100 text-purple-700 px-6 py-2">
             <BookOpen className="h-4 w-4 ml-2 inline" />
-            مدونة رويال
+            مدونة Royal Haroon
           </Badge>
           <h1 className="text-5xl font-bold text-gray-800 mb-4">
             مقالات وأفكار ملهمة

@@ -27,7 +27,7 @@ import { base44 } from "@/api/base44Client";
 const content = {
   ar: {
     title: "الدليل والمميزات",
-    subtitle: "شركة رويال للتنظيف والتعقيم ومكافحة الحشرات",
+    subtitle: "Royal Haroon للتنظيف والتعقيم",
     langLabel: "English",
     tabs: {
       overview: "نظرة عامة",
@@ -36,7 +36,7 @@ const content = {
       leaderboard: "المتصدرين",
     },
     overview: {
-      heading: "مرحباً بك في منصة رويال",
+      heading: "مرحباً بك في منصة Royal Haroon",
       desc: "منصة متكاملة لإدارة خدمات التنظيف والتعقيم ومكافحة الحشرات. استخدم التبويبات للتعرف على الامتيازات وطرق الاستخدام ومتابعة أداء فريقك.",
       quickStart: "ابدأ من هنا",
       quickItems: [

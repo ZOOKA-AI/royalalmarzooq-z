@@ -85,7 +85,7 @@ export default function Layout({ children, currentPageName }) {
         </Button>
         <div className="flex items-center gap-2">
           <Sparkles className="h-6 w-6 text-purple-600" />
-          <span className="font-bold text-purple-600">شركة رويال</span>
+          <span className="font-bold text-purple-600">Royal Haroon</span>
         </div>
         <div className="w-10" />
       </div>
@@ -112,8 +112,8 @@ export default function Layout({ children, currentPageName }) {
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="font-bold text-xl text-gray-800">شركة رويال</h1>
-                <p className="text-xs text-gray-500">للتنظيف والتعقيم ومكافحة الحشرات</p>
+                <h1 className="font-bold text-xl text-gray-800">Royal Haroon</h1>
+                <p className="text-xs text-gray-500">للتنظيف والتعقيم</p>
               </div>
             </div>
             <Button 

@@ -31,7 +31,7 @@ const testimonials = [
   {
     name: 'أحمد العلي',
     company: 'شركة النظافة المثالية',
-    text: 'رويال غيرت طريقة عملنا بالكامل! زادت إنتاجيتنا 300% في 3 أشهر فقط.',
+    text: 'Royal Haroon غيرت طريقة عملنا بالكامل! زادت إنتاجيتنا 300% في 3 أشهر فقط.',
     rating: 5
   },
   {
@@ -170,7 +170,7 @@ export default function Landing() {
       <section className="py-24 bg-white">
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold mb-4">لماذا رويال؟</h2>
+            <h2 className="text-5xl font-bold mb-4">لماذا Royal Haroon؟</h2>
             <p className="text-xl text-gray-600">نحن الأفضل، والأرقام تثبت ذلك</p>
           </div>
 
@@ -181,7 +181,7 @@ export default function Landing() {
                   <th className="p-6 text-right text-xl">الميزة</th>
                   <th className="p-6 text-center text-xl">
                     <Crown className="h-6 w-6 inline mb-1 ml-2" />
-                    رويال
+                    Royal Haroon
                   </th>
                   <th className="p-6 text-center text-xl">المنافسون</th>
                 </tr>
@@ -266,7 +266,7 @@ export default function Landing() {
           <Award className="h-20 w-20 mx-auto mb-8" />
           <h2 className="text-6xl font-bold mb-6">جاهز لتحويل عملك؟</h2>
           <p className="text-2xl mb-10 opacity-90">
-            انضم لمئات الشركات التي ضاعفت أرباحها مع رويال
+            انضم لمئات الشركات التي ضاعفت أرباحها مع Royal Haroon
           </p>
           <div className="flex gap-6 justify-center flex-wrap mb-8">
             <Link to={createPageUrl('Pricing')}>
@@ -297,7 +297,7 @@ export default function Landing() {
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <Sparkles className="h-8 w-8 text-purple-400" />
-                <span className="text-2xl font-bold">رويال</span>
+                <span className="text-2xl font-bold">Royal Haroon</span>
               </div>
               <p className="text-gray-400">
                 منصة إدارة الأعمال الأذكى في المنطقة
@@ -342,7 +342,7 @@ export default function Landing() {
           </div>
           
           <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-            <p>© 2026 شركة رويال - جميع الحقوق محفوظة</p>
+            <p>© 2026 Royal Haroon - جميع الحقوق محفوظة</p>
           </div>
         </div>
       </footer>

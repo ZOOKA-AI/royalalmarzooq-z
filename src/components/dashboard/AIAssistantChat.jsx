@@ -29,8 +29,8 @@ const knowledgeBase = {
   greetings: {
     patterns: ['مرحبا', 'السلام عليكم', 'اهلا', 'هاي', 'صباح الخير', 'مساء الخير', 'هلا'],
     responses: [
-      'أهلاً وسهلاً بك! 🌟 أنا مساعد رويال الذكي. كيف يمكنني خدمتك اليوم؟',
-      'مرحباً بك في شركة رويال! 🏠 أنا هنا لمساعدتك. ماذا تحتاج؟',
+      'أهلاً وسهلاً بك! 🌟 أنا مساعد Royal Haroon الذكي. كيف يمكنني خدمتك اليوم؟',
+      'مرحباً بك في Royal Haroon! 🏠 أنا هنا لمساعدتك. ماذا تحتاج؟',
       'حياك الله! 👋 أنا جاهز لمساعدتك. اختر من الأوامر السريعة أو اكتب طلبك.'
     ]
   },
@@ -81,7 +81,7 @@ export default function AIAssistantChat() {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: '🌟 مرحباً بك في شركة رويال!\n\nأنا مساعدك الذكي، يمكنني:\n• إنشاء طلبات وتسجيل عملاء\n• عرض الخدمات والأسعار\n• الإجابة على استفساراتك\n• التحدث معك صوتياً 🎤\n\nكيف أساعدك؟'
+      content: '🌟 مرحباً بك في Royal Haroon!\n\nأنا مساعدك الذكي، يمكنني:\n• إنشاء طلبات وتسجيل عملاء\n• عرض الخدمات والأسعار\n• الإجابة على استفساراتك\n• التحدث معك صوتياً 🎤\n\nكيف أساعدك؟'
     }
   ]);
   const [input, setInput] = useState('');
@@ -403,7 +403,7 @@ export default function AIAssistantChat() {
       }
       // فتح الراديو
       else if (lowerText.includes('راديو') || lowerText.includes('موسيقى')) {
-        responseText = `✅ جاري فتح راديو رويال...`;
+        responseText = `✅ جاري فتح راديو Royal Haroon...`;
         setTimeout(() => handleNavigation('Radio'), 1000);
       }
       // فتح المحادثة الذكية
@@ -454,7 +454,7 @@ export default function AIAssistantChat() {
       // استخدام الذكاء الاصطناعي للأسئلة المعقدة
       else {
         const response = await base44.integrations.Core.InvokeLLM({
-          prompt: `أنت مساعد ذكي متقدم لشركة رويال للتنظيف والتعقيم ومكافحة الحشرات في الإمارات.
+          prompt: `أنت مساعد ذكي متقدم لRoyal Haroon للتنظيف والتعقيم في الإمارات.
 
       معلومات الشركة:
       - رقم التواصل: 0563177803
@@ -467,7 +467,7 @@ export default function AIAssistantChat() {
       - توليد صور بالذكاء الاصطناعي
       - تحسين SEO
       - الوكيل الذكي (Gemini)
-      - راديو رويال
+      - راديو Royal Haroon
       - برنامج الولاء
       - التتبع المباشر للعمال
 
@@ -565,7 +565,7 @@ export default function AIAssistantChat() {
                 <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-purple-600"></span>
               </div>
               <div>
-                <CardTitle className="text-base font-bold">مساعد رويال الذكي</CardTitle>
+                <CardTitle className="text-base font-bold">مساعد Royal Haroon الذكي</CardTitle>
                 <div className="flex items-center gap-1 text-xs text-purple-200">
                   <Sparkles className="h-3 w-3" />
                   <span>متصل الآن • 24/7</span>

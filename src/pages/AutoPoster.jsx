@@ -60,7 +60,7 @@ export default function AutoPoster() {
     setGenerating(true);
     try {
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `أنشئ خطة محتوى تسويقية لمدة 30 يوم لشركة رويال للتنظيف:
+        prompt: `أنشئ خطة محتوى تسويقية لمدة 30 يوم لRoyal Haroon للتنظيف:
 
 المتطلبات:
 - 30 منشور متنوع

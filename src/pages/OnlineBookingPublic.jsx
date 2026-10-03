@@ -120,9 +120,9 @@ export default function OnlineBookingPublic() {
             <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center">
               <Sparkles className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-800">شركة رويال</h1>
+            <h1 className="text-3xl font-bold text-gray-800">Royal Haroon</h1>
           </div>
-          <p className="text-lg text-gray-600">للتنظيف والتعقيم ومكافحة الحشرات</p>
+          <p className="text-lg text-gray-600">للتنظيف والتعقيم</p>
           <p className="text-purple-600 font-medium">احجز خدمتك أونلاين - نصلك في 24 ساعة</p>
         </div>
 

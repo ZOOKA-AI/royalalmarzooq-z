@@ -76,7 +76,7 @@ export default function PaymentGateway() {
 ${paymentLink}
 
 شكراً لك!
-شركة رويال للتنظيف
+Royal Haroon للتنظيف
         `
       });
 

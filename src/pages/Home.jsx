@@ -103,7 +103,7 @@ export default function Home() {
           <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
             مرحباً بك في
             <br />
-            <span className="text-yellow-300">رويال المتطور</span>
+            <span className="text-yellow-300">Royal Haroon المتطور</span>
           </h1>
           
           <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl">
@@ -173,7 +173,7 @@ export default function Home() {
             <Zap className="h-4 w-4 ml-2" />
             ميزات متقدمة
           </Badge>
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">لماذا رويال؟</h2>
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">لماذا Royal Haroon؟</h2>
           <p className="text-xl text-gray-600">تقنيات حديثة لتسهيل عملك</p>
         </div>
 

@@ -82,7 +82,7 @@ export default function Settings() {
             <Building className="h-5 w-5 text-purple-600" />
             معلومات الشركة
           </CardTitle>
-          <CardDescription>شركة رويال للتنظيف والتعقيم ومكافحة الحشرات</CardDescription>
+          <CardDescription>Royal Haroon للتنظيف والتعقيم</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

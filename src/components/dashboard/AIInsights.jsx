@@ -43,7 +43,7 @@ export default function AIInsights({ orders, clients, workers, services }) {
     const busyWorkers = workers.filter(w => w.status === 'مشغول').length;
 
     const dataSummary = `
-بيانات شركة رويال للتنظيف:
+بيانات Royal Haroon للتنظيف:
 - إجمالي الطلبات: ${orders.length}
 - طلبات هذا الشهر: ${thisMonth.length}
 - طلبات مكتملة: ${completedOrders.length}
@@ -61,7 +61,7 @@ export default function AIInsights({ orders, clients, workers, services }) {
 
     try {
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `أنت محلل بيانات ذكي لشركة رويال للتنظيف والتعقيم ومكافحة الحشرات في الإمارات.
+        prompt: `أنت محلل بيانات ذكي لRoyal Haroon للتنظيف والتعقيم في الإمارات.
 
 ${dataSummary}
 

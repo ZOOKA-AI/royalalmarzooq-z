@@ -9,7 +9,7 @@ export default function Radio() {
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
             <RadioIcon className="h-6 w-6 text-purple-600" />
-            <h1 className="text-2xl font-bold text-gray-800">راديو رويال</h1>
+            <h1 className="text-2xl font-bold text-gray-800">راديو Royal Haroon</h1>
           </div>
           <a 
             href="https://zekr-ai-copy-e8a95db7.base44.app/radio" 
@@ -28,7 +28,7 @@ export default function Radio() {
         <iframe
           src="https://zekr-ai-copy-e8a95db7.base44.app/radio"
           className="w-full h-full border-0"
-          title="راديو رويال"
+          title="راديو Royal Haroon"
         />
       </div>
     </div>

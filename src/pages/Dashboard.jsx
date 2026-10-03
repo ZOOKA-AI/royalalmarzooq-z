@@ -73,7 +73,7 @@ export default function Dashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">لوحة التحكم الذكية</h1>
-          <p className="text-gray-500">شركة رويال للتنظيف والتعقيم ومكافحة الحشرات</p>
+          <p className="text-gray-500">Royal Haroon للتنظيف والتعقيم</p>
         </div>
         <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 px-4 py-2 rounded-full">
           <Activity className="h-4 w-4 animate-pulse" />

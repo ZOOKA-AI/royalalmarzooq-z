@@ -28,7 +28,7 @@ export default function VideoCreator() {
     setGenerating(true);
     try {
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `أنت كاتب سكريبتات فيديو محترف. اكتب سكريبت فيديو تسويقي احترافي عن "${topic}" لشركة رويال للتنظيف:
+        prompt: `أنت كاتب سكريبتات فيديو محترف. اكتب سكريبت فيديو تسويقي احترافي عن "${topic}" لRoyal Haroon للتنظيف:
 
 المتطلبات:
 - المدة: 60-90 ثانية
@@ -297,7 +297,7 @@ For cleaning services company. Photorealistic.`;
         <CardContent>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {[
-              { name: 'فيديو تعريفي', emoji: '👋', topic: 'تعريف بشركة رويال وخدماتها' },
+              { name: 'فيديو تعريفي', emoji: '👋', topic: 'تعريف بRoyal Haroon وخدماتها' },
               { name: 'عرض خاص', emoji: '🎁', topic: 'عرض خصم 30% على خدمات التنظيف' },
               { name: 'شهادة عميل', emoji: '⭐', topic: 'شهادة عميل راضي عن خدمة التنظيف' },
               { name: 'قبل وبعد', emoji: '✨', topic: 'نتائج مذهلة قبل وبعد التنظيف' },
