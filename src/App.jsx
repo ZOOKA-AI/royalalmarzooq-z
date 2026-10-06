@@ -42,18 +42,19 @@ const AuthenticatedApp = () => {
     }
   }
 
-    // Public pages that should not be wrapped in the dashboard Layout (legal pages)
-    const publicPages = ['Privacy', 'Terms'];
+    // Public pages that should not be wrapped in the dashboard Layout (company website + legal pages)
+    const publicPages = ['Landing', 'About', 'Privacy', 'Terms', 'Licenses'];
 
     // Render the main app
     return (
       <Routes>
         <Route path="/" element={
+          publicPages.includes(mainPageKey) ? <MainPage /> :
           <LayoutWrapper currentPageName={mainPageKey}>
             <MainPage />
           </LayoutWrapper>
         } />
-        {/* Public legal pages - rendered without dashboard sidebar for store compliance */}
+        {/* Public pages - rendered without dashboard sidebar for store compliance */}
         {publicPages.map(path => {
           const Page = Pages[path];
           return Page ? (

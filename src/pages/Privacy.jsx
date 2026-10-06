@@ -212,8 +212,8 @@ export default function Privacy() {
                 فريقنا المختص بالخصوصية جاهز للإجابة على استفساراتك
               </p>
               <div className="flex gap-4 flex-wrap">
-                <a href="mailto:privacy@royal-cleaning.com" className="text-white hover:underline text-lg">
-                  📧 privacy@royal-cleaning.com
+                <a href="mailto:info@royalharoon.com" className="text-white hover:underline text-lg">
+                  📧 info@royalharoon.com
                 </a>
                 <a href="https://wa.me/0563177803" className="text-white hover:underline text-lg">
                   📱 0563177803

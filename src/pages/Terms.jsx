@@ -255,8 +255,8 @@ export default function Terms() {
                 فريقنا القانوني جاهز للإجابة على استفساراتك
               </p>
               <div className="flex gap-4 flex-wrap">
-                <a href="mailto:legal@royal-cleaning.com" className="text-white hover:underline text-lg">
-                  📧 legal@royal-cleaning.com
+                <a href="mailto:info@royalharoon.com" className="text-white hover:underline text-lg">
+                  📧 info@royalharoon.com
                 </a>
                 <a href="https://wa.me/0563177803" className="text-white hover:underline text-lg">
                   📱 0563177803
